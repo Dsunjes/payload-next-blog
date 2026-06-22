@@ -39,12 +39,12 @@ const nearQuery: Where = { location: { near: '-122.4194,37.7749,10000' } }
 import type { Where } from 'payload'
 
 const complexQuery: Where = {
-  or: [
-    { color: { equals: 'mint' } },
-    {
-      and: [{ color: { equals: 'white' } }, { featured: { equals: false } }],
-    },
-  ],
+    or: [
+        { color: { equals: 'mint' } },
+        {
+            and: [{ color: { equals: 'white' } }, { featured: { equals: false } }],
+        },
+    ],
 }
 ```
 
@@ -54,8 +54,8 @@ const complexQuery: Where = {
 import type { Where } from 'payload'
 
 const nestedQuery: Where = {
-  'author.role': { equals: 'editor' },
-  'meta.featured': { exists: true },
+    'author.role': { equals: 'editor' },
+    'meta.featured': { exists: true },
 }
 ```
 
@@ -64,59 +64,59 @@ const nestedQuery: Where = {
 ```ts
 // Find documents
 const posts = await payload.find({
-  collection: 'posts',
-  where: {
-    status: { equals: 'published' },
-    'author.name': { contains: 'john' },
-  },
-  depth: 2,
-  limit: 10,
-  page: 1,
-  sort: '-createdAt',
-  locale: 'en',
-  select: {
-    title: true,
-    author: true,
-  },
+    collection: 'posts',
+    where: {
+        status: { equals: 'published' },
+        'author.name': { contains: 'john' },
+    },
+    depth: 2,
+    limit: 10,
+    page: 1,
+    sort: '-createdAt',
+    locale: 'en',
+    select: {
+        title: true,
+        author: true,
+    },
 })
 
 // Find by ID
 const post = await payload.findByID({
-  collection: 'posts',
-  id: '123',
-  depth: 2,
+    collection: 'posts',
+    id: '123',
+    depth: 2,
 })
 
 // Create
 const post = await payload.create({
-  collection: 'posts',
-  data: {
-    title: 'New Post',
-    status: 'draft',
-  },
+    collection: 'posts',
+    data: {
+        title: 'New Post',
+        status: 'draft',
+    },
 })
 
 // Update
 await payload.update({
-  collection: 'posts',
-  id: '123',
-  data: {
-    status: 'published',
-  },
+    collection: 'posts',
+    id: '123',
+    data: {
+        status: 'published',
+    },
 })
 
 // Delete
 await payload.delete({
-  collection: 'posts',
-  id: '123',
+    collection: 'posts',
+    id: '123',
 })
 
 // Count
 const count = await payload.count({
-  collection: 'posts',
-  where: {
-    status: { equals: 'published' },
-  },
+    collection: 'posts',
+    where: {
+        status: { equals: 'published' },
+    },
 })
 ```
 
@@ -127,20 +127,20 @@ When performing operations in hooks or nested operations, pass the `req` paramet
 ```ts
 // ✅ CORRECT: Pass req for transaction safety
 const afterChange: CollectionAfterChangeHook = async ({ doc, req }) => {
-  await req.payload.create({
-    collection: 'audit-log',
-    data: { action: 'created', docId: doc.id },
-    req, // Maintains transaction atomicity
-  })
+    await req.payload.create({
+        collection: 'audit-log',
+        data: { action: 'created', docId: doc.id },
+        req, // Maintains transaction atomicity
+    })
 }
 
 // ❌ WRONG: Missing req breaks transaction
 const afterChange: CollectionAfterChangeHook = async ({ doc, req }) => {
-  await req.payload.create({
-    collection: 'audit-log',
-    data: { action: 'created', docId: doc.id },
-    // Missing req - runs in separate transaction
-  })
+    await req.payload.create({
+        collection: 'audit-log',
+        data: { action: 'created', docId: doc.id },
+        // Missing req - runs in separate transaction
+    })
 }
 ```
 
@@ -153,26 +153,26 @@ This is critical for MongoDB replica sets and Postgres. See [ADAPTERS.md#threadi
 ```ts
 // ❌ WRONG: User is passed but access control is bypassed
 const posts = await payload.find({
-  collection: 'posts',
-  user: currentUser,
-  // Missing: overrideAccess: false
-  // Result: Operation runs with ADMIN privileges, ignoring user's permissions
+    collection: 'posts',
+    user: currentUser,
+    // Missing: overrideAccess: false
+    // Result: Operation runs with ADMIN privileges, ignoring user's permissions
 })
 
 // ✅ CORRECT: Respects user's access control permissions
 const posts = await payload.find({
-  collection: 'posts',
-  user: currentUser,
-  overrideAccess: false, // Required to enforce access control
-  // Result: User only sees posts they have permission to read
+    collection: 'posts',
+    user: currentUser,
+    overrideAccess: false, // Required to enforce access control
+    // Result: User only sees posts they have permission to read
 })
 
 // Administrative operation (intentionally bypass access control)
 const allPosts = await payload.find({
-  collection: 'posts',
-  // No user parameter
-  // overrideAccess defaults to true
-  // Result: Returns all posts regardless of access control
+    collection: 'posts',
+    // No user parameter
+    // overrideAccess defaults to true
+    // Result: Returns all posts regardless of access control
 })
 ```
 
@@ -197,16 +197,16 @@ See [ACCESS-CONTROL.md#important-notes](ACCESS-CONTROL.md#important-notes) for m
 import { stringify } from 'qs-esm'
 
 const query = {
-  status: { equals: 'published' },
+    status: { equals: 'published' },
 }
 
 const queryString = stringify(
-  {
-    where: query,
-    depth: 2,
-    limit: 10,
-  },
-  { addQueryPrefix: true },
+    {
+        where: query,
+        depth: 2,
+        limit: 10,
+    },
+    { addQueryPrefix: true },
 )
 
 const response = await fetch(`https://api.example.com/api/posts${queryString}`)
@@ -231,37 +231,37 @@ POST   /api/globals/{slug}         - Update global
 
 ```graphql
 query {
-  Posts(where: { status: { equals: published } }, limit: 10, sort: "-createdAt") {
-    docs {
-      id
-      title
-      author {
-        name
-      }
+    Posts(where: { status: { equals: published } }, limit: 10, sort: "-createdAt") {
+        docs {
+            id
+            title
+            author {
+                name
+            }
+        }
+        totalDocs
+        hasNextPage
     }
-    totalDocs
-    hasNextPage
-  }
 }
 
 mutation {
-  createPost(data: { title: "New Post", status: draft }) {
-    id
-    title
-  }
+    createPost(data: { title: "New Post", status: draft }) {
+        id
+        title
+    }
 }
 
 mutation {
-  updatePost(id: "123", data: { status: published }) {
-    id
-    status
-  }
+    updatePost(id: "123", data: { status: published }) {
+        id
+        status
+    }
 }
 
 mutation {
-  deletePost(id: "123") {
-    id
-  }
+    deletePost(id: "123") {
+        id
+    }
 }
 ```
 

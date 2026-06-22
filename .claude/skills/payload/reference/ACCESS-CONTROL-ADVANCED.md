@@ -12,22 +12,22 @@ Control access based on user locale for internationalized content.
 import type { Access } from 'payload'
 
 export const localeSpecificAccess: Access = ({ req: { user, locale } }) => {
-  // Authenticated users can access all locales
-  if (user) return true
+    // Authenticated users can access all locales
+    if (user) return true
 
-  // Public users can only access English content
-  if (locale === 'en') return true
+    // Public users can only access English content
+    if (locale === 'en') return true
 
-  return false
+    return false
 }
 
 // Usage in collection
 export const Posts: CollectionConfig = {
-  slug: 'posts',
-  access: {
-    read: localeSpecificAccess,
-  },
-  fields: [{ name: 'title', type: 'text', localized: true }],
+    slug: 'posts',
+    access: {
+        read: localeSpecificAccess,
+    },
+    fields: [{ name: 'title', type: 'text', localized: true }],
 }
 ```
 
@@ -41,22 +41,22 @@ Restrict access based on device type or user agent.
 import type { Access } from 'payload'
 
 export const mobileOnlyAccess: Access = ({ req: { headers } }) => {
-  const userAgent = headers?.get('user-agent') || ''
-  return /mobile|android|iphone/i.test(userAgent)
+    const userAgent = headers?.get('user-agent') || ''
+    return /mobile|android|iphone/i.test(userAgent)
 }
 
 export const desktopOnlyAccess: Access = ({ req: { headers } }) => {
-  const userAgent = headers?.get('user-agent') || ''
-  return !/mobile|android|iphone/i.test(userAgent)
+    const userAgent = headers?.get('user-agent') || ''
+    return !/mobile|android|iphone/i.test(userAgent)
 }
 
 // Usage
 export const MobileContent: CollectionConfig = {
-  slug: 'mobile-content',
-  access: {
-    read: mobileOnlyAccess,
-  },
-  fields: [{ name: 'title', type: 'text' }],
+    slug: 'mobile-content',
+    access: {
+        read: mobileOnlyAccess,
+    },
+    fields: [{ name: 'title', type: 'text' }],
 }
 ```
 
@@ -70,21 +70,21 @@ Restrict access from specific IP addresses (requires middleware/proxy headers).
 import type { Access } from 'payload'
 
 export const restrictedIpAccess = (allowedIps: string[]): Access => {
-  return ({ req: { headers } }) => {
-    const ip = headers?.get('x-forwarded-for') || headers?.get('x-real-ip')
-    return allowedIps.includes(ip || '')
-  }
+    return ({ req: { headers } }) => {
+        const ip = headers?.get('x-forwarded-for') || headers?.get('x-real-ip')
+        return allowedIps.includes(ip || '')
+    }
 }
 
 // Usage
 const internalIps = ['192.168.1.0/24', '10.0.0.5']
 
 export const InternalDocs: CollectionConfig = {
-  slug: 'internal-docs',
-  access: {
-    read: restrictedIpAccess(internalIps),
-  },
-  fields: [{ name: 'content', type: 'richText' }],
+    slug: 'internal-docs',
+    access: {
+        read: restrictedIpAccess(internalIps),
+    },
+    fields: [{ name: 'content', type: 'richText' }],
 }
 ```
 
@@ -100,18 +100,18 @@ export const InternalDocs: CollectionConfig = {
 import type { Access } from 'payload'
 
 export const todayOnlyAccess: Access = ({ req: { user } }) => {
-  if (!user) return false
+    if (!user) return false
 
-  const now = new Date()
-  const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate())
-  const endOfDay = new Date(startOfDay.getTime() + 24 * 60 * 60 * 1000)
+    const now = new Date()
+    const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate())
+    const endOfDay = new Date(startOfDay.getTime() + 24 * 60 * 60 * 1000)
 
-  return {
-    createdAt: {
-      greater_than_equal: startOfDay.toISOString(),
-      less_than: endOfDay.toISOString(),
-    },
-  }
+    return {
+        createdAt: {
+            greater_than_equal: startOfDay.toISOString(),
+            less_than: endOfDay.toISOString(),
+        },
+    }
 }
 ```
 
@@ -123,28 +123,28 @@ export const todayOnlyAccess: Access = ({ req: { user } }) => {
 import type { Access } from 'payload'
 
 export const recentRecordsAccess = (days: number): Access => {
-  return ({ req: { user } }) => {
-    if (!user) return false
-    if (user.roles?.includes('admin')) return true
+    return ({ req: { user } }) => {
+        if (!user) return false
+        if (user.roles?.includes('admin')) return true
 
-    const cutoff = new Date()
-    cutoff.setDate(cutoff.getDate() - days)
+        const cutoff = new Date()
+        cutoff.setDate(cutoff.getDate() - days)
 
-    return {
-      createdAt: {
-        greater_than_equal: cutoff.toISOString(),
-      },
+        return {
+            createdAt: {
+                greater_than_equal: cutoff.toISOString(),
+            },
+        }
     }
-  }
 }
 
 // Usage: Users see only last 30 days, admins see all
 export const Logs: CollectionConfig = {
-  slug: 'logs',
-  access: {
-    read: recentRecordsAccess(30),
-  },
-  fields: [{ name: 'message', type: 'text' }],
+    slug: 'logs',
+    access: {
+        read: recentRecordsAccess(30),
+    },
+    fields: [{ name: 'message', type: 'text' }],
 }
 ```
 
@@ -154,22 +154,25 @@ export const Logs: CollectionConfig = {
 import type { Access } from 'payload'
 
 export const scheduledContentAccess: Access = ({ req: { user } }) => {
-  // Editors see all content
-  if (user?.roles?.includes('admin') || user?.roles?.includes('editor')) {
-    return true
-  }
+    // Editors see all content
+    if (user?.roles?.includes('admin') || user?.roles?.includes('editor')) {
+        return true
+    }
 
-  const now = new Date().toISOString()
+    const now = new Date().toISOString()
 
-  // Public sees only content within publish window
-  return {
-    and: [
-      { publishDate: { less_than_equal: now } },
-      {
-        or: [{ unpublishDate: { exists: false } }, { unpublishDate: { greater_than: now } }],
-      },
-    ],
-  }
+    // Public sees only content within publish window
+    return {
+        and: [
+            { publishDate: { less_than_equal: now } },
+            {
+                or: [
+                    { unpublishDate: { exists: false } },
+                    { unpublishDate: { greater_than: now } },
+                ],
+            },
+        ],
+    }
 }
 ```
 
@@ -183,28 +186,28 @@ export const scheduledContentAccess: Access = ({ req: { user } }) => {
 import type { Access } from 'payload'
 
 export const activeSubscriptionAccess: Access = async ({ req: { user } }) => {
-  if (!user) return false
-  if (user.roles?.includes('admin')) return true
+    if (!user) return false
+    if (user.roles?.includes('admin')) return true
 
-  try {
-    const subscription = await req.payload.findByID({
-      collection: 'subscriptions',
-      id: user.subscriptionId,
-    })
+    try {
+        const subscription = await req.payload.findByID({
+            collection: 'subscriptions',
+            id: user.subscriptionId,
+        })
 
-    return subscription?.status === 'active'
-  } catch {
-    return false
-  }
+        return subscription?.status === 'active'
+    } catch {
+        return false
+    }
 }
 
 // Usage
 export const PremiumContent: CollectionConfig = {
-  slug: 'premium-content',
-  access: {
-    read: activeSubscriptionAccess,
-  },
-  fields: [{ name: 'title', type: 'text' }],
+    slug: 'premium-content',
+    access: {
+        read: activeSubscriptionAccess,
+    },
+    fields: [{ name: 'title', type: 'text' }],
 }
 ```
 
@@ -214,37 +217,37 @@ export const PremiumContent: CollectionConfig = {
 import type { Access } from 'payload'
 
 export const tierBasedAccess = (requiredTier: string): Access => {
-  const tierHierarchy = ['free', 'basic', 'pro', 'enterprise']
+    const tierHierarchy = ['free', 'basic', 'pro', 'enterprise']
 
-  return async ({ req: { user } }) => {
-    if (!user) return false
-    if (user.roles?.includes('admin')) return true
+    return async ({ req: { user } }) => {
+        if (!user) return false
+        if (user.roles?.includes('admin')) return true
 
-    try {
-      const subscription = await req.payload.findByID({
-        collection: 'subscriptions',
-        id: user.subscriptionId,
-      })
+        try {
+            const subscription = await req.payload.findByID({
+                collection: 'subscriptions',
+                id: user.subscriptionId,
+            })
 
-      if (subscription?.status !== 'active') return false
+            if (subscription?.status !== 'active') return false
 
-      const userTierIndex = tierHierarchy.indexOf(subscription.tier)
-      const requiredTierIndex = tierHierarchy.indexOf(requiredTier)
+            const userTierIndex = tierHierarchy.indexOf(subscription.tier)
+            const requiredTierIndex = tierHierarchy.indexOf(requiredTier)
 
-      return userTierIndex >= requiredTierIndex
-    } catch {
-      return false
+            return userTierIndex >= requiredTierIndex
+        } catch {
+            return false
+        }
     }
-  }
 }
 
 // Usage
 export const EnterpriseFeatures: CollectionConfig = {
-  slug: 'enterprise-features',
-  access: {
-    read: tierBasedAccess('enterprise'),
-  },
-  fields: [{ name: 'feature', type: 'text' }],
+    slug: 'enterprise-features',
+    access: {
+        read: tierBasedAccess('enterprise'),
+    },
+    fields: [{ name: 'feature', type: 'text' }],
 }
 ```
 
@@ -262,10 +265,10 @@ Generate access control for specific roles.
 import type { Access } from 'payload'
 
 export function createRoleBasedAccess(roles: string[]): Access {
-  return ({ req: { user } }) => {
-    if (!user) return false
-    return roles.some((role) => user.roles?.includes(role))
-  }
+    return ({ req: { user } }) => {
+        if (!user) return false
+        return roles.some((role) => user.roles?.includes(role))
+    }
 }
 
 // Usage
@@ -273,13 +276,13 @@ const adminOrEditor = createRoleBasedAccess(['admin', 'editor'])
 const moderatorAccess = createRoleBasedAccess(['admin', 'moderator'])
 
 export const Posts: CollectionConfig = {
-  slug: 'posts',
-  access: {
-    create: adminOrEditor,
-    update: adminOrEditor,
-    delete: moderatorAccess,
-  },
-  fields: [{ name: 'title', type: 'text' }],
+    slug: 'posts',
+    access: {
+        create: adminOrEditor,
+        update: adminOrEditor,
+        delete: moderatorAccess,
+    },
+    fields: [{ name: 'title', type: 'text' }],
 }
 ```
 
@@ -293,14 +296,14 @@ Generate organization-scoped access with optional admin bypass.
 import type { Access } from 'payload'
 
 export function createOrgScopedAccess(allowAdmin = true): Access {
-  return ({ req: { user } }) => {
-    if (!user) return false
-    if (allowAdmin && user.roles?.includes('admin')) return true
+    return ({ req: { user } }) => {
+        if (!user) return false
+        if (allowAdmin && user.roles?.includes('admin')) return true
 
-    return {
-      organizationId: { in: user.organizationIds || [] },
+        return {
+            organizationId: { in: user.organizationIds || [] },
+        }
     }
-  }
 }
 
 // Usage
@@ -308,16 +311,16 @@ const orgScoped = createOrgScopedAccess() // Admins bypass
 const strictOrgScoped = createOrgScopedAccess(false) // Admins also scoped
 
 export const Projects: CollectionConfig = {
-  slug: 'projects',
-  access: {
-    read: orgScoped,
-    update: orgScoped,
-    delete: strictOrgScoped,
-  },
-  fields: [
-    { name: 'title', type: 'text' },
-    { name: 'organizationId', type: 'text', required: true },
-  ],
+    slug: 'projects',
+    access: {
+        read: orgScoped,
+        update: orgScoped,
+        delete: strictOrgScoped,
+    },
+    fields: [
+        { name: 'title', type: 'text' },
+        { name: 'organizationId', type: 'text', required: true },
+    ],
 }
 ```
 
@@ -331,29 +334,29 @@ Generate team-scoped access with configurable field name.
 import type { Access } from 'payload'
 
 export function createTeamBasedAccess(teamField = 'teamId'): Access {
-  return ({ req: { user } }) => {
-    if (!user) return false
-    if (user.roles?.includes('admin')) return true
+    return ({ req: { user } }) => {
+        if (!user) return false
+        if (user.roles?.includes('admin')) return true
 
-    return {
-      [teamField]: { in: user.teamIds || [] },
+        return {
+            [teamField]: { in: user.teamIds || [] },
+        }
     }
-  }
 }
 
 // Usage with custom field name
 const projectTeamAccess = createTeamBasedAccess('projectTeam')
 
 export const Tasks: CollectionConfig = {
-  slug: 'tasks',
-  access: {
-    read: projectTeamAccess,
-    update: projectTeamAccess,
-  },
-  fields: [
-    { name: 'title', type: 'text' },
-    { name: 'projectTeam', type: 'text', required: true },
-  ],
+    slug: 'tasks',
+    access: {
+        read: projectTeamAccess,
+        update: projectTeamAccess,
+    },
+    fields: [
+        { name: 'title', type: 'text' },
+        { name: 'projectTeam', type: 'text', required: true },
+    ],
 }
 ```
 
@@ -367,28 +370,28 @@ Generate access limited to records within specified days.
 import type { Access } from 'payload'
 
 export function createTimeLimitedAccess(daysAccess: number): Access {
-  return ({ req: { user } }) => {
-    if (!user) return false
-    if (user.roles?.includes('admin')) return true
+    return ({ req: { user } }) => {
+        if (!user) return false
+        if (user.roles?.includes('admin')) return true
 
-    const cutoff = new Date()
-    cutoff.setDate(cutoff.getDate() - daysAccess)
+        const cutoff = new Date()
+        cutoff.setDate(cutoff.getDate() - daysAccess)
 
-    return {
-      createdAt: {
-        greater_than_equal: cutoff.toISOString(),
-      },
+        return {
+            createdAt: {
+                greater_than_equal: cutoff.toISOString(),
+            },
+        }
     }
-  }
 }
 
 // Usage: Users see 90 days, admins see all
 export const ActivityLogs: CollectionConfig = {
-  slug: 'activity-logs',
-  access: {
-    read: createTimeLimitedAccess(90),
-  },
-  fields: [{ name: 'action', type: 'text' }],
+    slug: 'activity-logs',
+    access: {
+        read: createTimeLimitedAccess(90),
+    },
+    fields: [{ name: 'action', type: 'text' }],
 }
 ```
 
@@ -404,17 +407,17 @@ Complete collection configurations for common scenarios.
 import type { CollectionConfig } from 'payload'
 
 export const BasicCollection: CollectionConfig = {
-  slug: 'basic-collection',
-  access: {
-    create: ({ req: { user } }) => Boolean(user),
-    read: ({ req: { user } }) => Boolean(user),
-    update: ({ req: { user } }) => Boolean(user),
-    delete: ({ req: { user } }) => Boolean(user),
-  },
-  fields: [
-    { name: 'title', type: 'text', required: true },
-    { name: 'content', type: 'richText' },
-  ],
+    slug: 'basic-collection',
+    access: {
+        create: ({ req: { user } }) => Boolean(user),
+        read: ({ req: { user } }) => Boolean(user),
+        update: ({ req: { user } }) => Boolean(user),
+        delete: ({ req: { user } }) => Boolean(user),
+    },
+    fields: [
+        { name: 'title', type: 'text', required: true },
+        { name: 'content', type: 'richText' },
+    ],
 }
 ```
 
@@ -426,37 +429,37 @@ export const BasicCollection: CollectionConfig = {
 import type { CollectionConfig } from 'payload'
 
 export const PublicAuthCollection: CollectionConfig = {
-  slug: 'posts',
-  access: {
-    // Only admins/editors can create
-    create: ({ req: { user } }) => {
-      return user?.roles?.some((role) => ['admin', 'editor'].includes(role)) || false
-    },
+    slug: 'posts',
+    access: {
+        // Only admins/editors can create
+        create: ({ req: { user } }) => {
+            return user?.roles?.some((role) => ['admin', 'editor'].includes(role)) || false
+        },
 
-    // Authenticated users see all, public sees only published
-    read: ({ req: { user } }) => {
-      if (user) return true
-      return { _status: { equals: 'published' } }
-    },
+        // Authenticated users see all, public sees only published
+        read: ({ req: { user } }) => {
+            if (user) return true
+            return { _status: { equals: 'published' } }
+        },
 
-    // Only admins/editors can update
-    update: ({ req: { user } }) => {
-      return user?.roles?.some((role) => ['admin', 'editor'].includes(role)) || false
-    },
+        // Only admins/editors can update
+        update: ({ req: { user } }) => {
+            return user?.roles?.some((role) => ['admin', 'editor'].includes(role)) || false
+        },
 
-    // Only admins can delete
-    delete: ({ req: { user } }) => {
-      return user?.roles?.includes('admin') || false
+        // Only admins can delete
+        delete: ({ req: { user } }) => {
+            return user?.roles?.includes('admin') || false
+        },
     },
-  },
-  versions: {
-    drafts: true,
-  },
-  fields: [
-    { name: 'title', type: 'text', required: true },
-    { name: 'content', type: 'richText', required: true },
-    { name: 'author', type: 'relationship', relationTo: 'users' },
-  ],
+    versions: {
+        drafts: true,
+    },
+    fields: [
+        { name: 'title', type: 'text', required: true },
+        { name: 'content', type: 'richText', required: true },
+        { name: 'author', type: 'relationship', relationTo: 'users' },
+    ],
 }
 ```
 
@@ -468,40 +471,40 @@ export const PublicAuthCollection: CollectionConfig = {
 import type { CollectionConfig } from 'payload'
 
 export const SelfServiceCollection: CollectionConfig = {
-  slug: 'users',
-  auth: true,
-  access: {
-    // Admins can create users
-    create: ({ req: { user } }) => user?.roles?.includes('admin') || false,
+    slug: 'users',
+    auth: true,
+    access: {
+        // Admins can create users
+        create: ({ req: { user } }) => user?.roles?.includes('admin') || false,
 
-    // Anyone can read user profiles
-    read: () => true,
+        // Anyone can read user profiles
+        read: () => true,
 
-    // Users can update self, admins can update anyone
-    update: ({ req: { user }, id }) => {
-      if (!user) return false
-      if (user.roles?.includes('admin')) return true
-      return user.id === id
+        // Users can update self, admins can update anyone
+        update: ({ req: { user }, id }) => {
+            if (!user) return false
+            if (user.roles?.includes('admin')) return true
+            return user.id === id
+        },
+
+        // Only admins can delete
+        delete: ({ req: { user } }) => user?.roles?.includes('admin') || false,
     },
-
-    // Only admins can delete
-    delete: ({ req: { user } }) => user?.roles?.includes('admin') || false,
-  },
-  fields: [
-    { name: 'name', type: 'text', required: true },
-    { name: 'email', type: 'email', required: true },
-    {
-      name: 'roles',
-      type: 'select',
-      hasMany: true,
-      options: ['admin', 'editor', 'user'],
-      access: {
-        // Only admins can read/update roles
-        read: ({ req: { user } }) => user?.roles?.includes('admin') || false,
-        update: ({ req: { user } }) => user?.roles?.includes('admin') || false,
-      },
-    },
-  ],
+    fields: [
+        { name: 'name', type: 'text', required: true },
+        { name: 'email', type: 'email', required: true },
+        {
+            name: 'roles',
+            type: 'select',
+            hasMany: true,
+            options: ['admin', 'editor', 'user'],
+            access: {
+                // Only admins can read/update roles
+                read: ({ req: { user } }) => user?.roles?.includes('admin') || false,
+                update: ({ req: { user } }) => user?.roles?.includes('admin') || false,
+            },
+        },
+    ],
 }
 ```
 
@@ -513,13 +516,13 @@ export const SelfServiceCollection: CollectionConfig = {
 
 ```ts
 export const debugAccess: Access = ({ req: { user }, id }) => {
-  console.log('Access check:', {
-    userId: user?.id,
-    userRoles: user?.roles,
-    docId: id,
-    timestamp: new Date().toISOString(),
-  })
-  return true
+    console.log('Access check:', {
+        userId: user?.id,
+        userRoles: user?.roles,
+        docId: id,
+        timestamp: new Date().toISOString(),
+    })
+    return true
 }
 ```
 
@@ -527,13 +530,13 @@ export const debugAccess: Access = ({ req: { user }, id }) => {
 
 ```ts
 export const checkArgsAccess: Access = (args) => {
-  console.log('Available arguments:', {
-    hasReq: 'req' in args,
-    hasUser: args.req?.user ? 'yes' : 'no',
-    hasId: args.id ? 'provided' : 'undefined',
-    hasData: args.data ? 'provided' : 'undefined',
-  })
-  return true
+    console.log('Available arguments:', {
+        hasReq: 'req' in args,
+        hasUser: args.req?.user ? 'yes' : 'no',
+        hasId: args.id ? 'provided' : 'undefined',
+        hasData: args.data ? 'provided' : 'undefined',
+    })
+    return true
 }
 ```
 
@@ -541,15 +544,15 @@ export const checkArgsAccess: Access = (args) => {
 
 ```ts
 export const timedAsyncAccess: Access = async ({ req }) => {
-  const start = Date.now()
+    const start = Date.now()
 
-  const result = await fetch('https://auth-service.example.com/validate', {
-    headers: { userId: req.user?.id },
-  })
+    const result = await fetch('https://auth-service.example.com/validate', {
+        headers: { userId: req.user?.id },
+    })
 
-  console.log(`Access check took ${Date.now() - start}ms`)
+    console.log(`Access check took ${Date.now() - start}ms`)
 
-  return result.ok
+    return result.ok
 }
 ```
 
@@ -558,9 +561,9 @@ export const timedAsyncAccess: Access = async ({ req }) => {
 ```ts
 // In test/development
 const testAccess = await payload.find({
-  collection: 'posts',
-  overrideAccess: false, // Enforce access control
-  user: undefined, // Simulate no user
+    collection: 'posts',
+    overrideAccess: false, // Enforce access control
+    user: undefined, // Simulate no user
 })
 
 console.log('Public access result:', testAccess.docs.length)
@@ -575,21 +578,21 @@ console.log('Public access result:', testAccess.docs.length)
 ```ts
 // ❌ Slow: Multiple sequential async calls
 export const slowAccess: Access = async ({ req: { user } }) => {
-  const org = await req.payload.findByID({ collection: 'orgs', id: user.orgId })
-  const team = await req.payload.findByID({ collection: 'teams', id: user.teamId })
-  const subscription = await req.payload.findByID({ collection: 'subs', id: user.subId })
+    const org = await req.payload.findByID({ collection: 'orgs', id: user.orgId })
+    const team = await req.payload.findByID({ collection: 'teams', id: user.teamId })
+    const subscription = await req.payload.findByID({ collection: 'subs', id: user.subId })
 
-  return org.active && team.active && subscription.active
+    return org.active && team.active && subscription.active
 }
 
 // ✅ Fast: Use query constraints or cache in context
 export const fastAccess: Access = ({ req: { user, context } }) => {
-  // Cache expensive lookups
-  if (!context.orgStatus) {
-    context.orgStatus = checkOrgStatus(user.orgId)
-  }
+    // Cache expensive lookups
+    if (!context.orgStatus) {
+        context.orgStatus = checkOrgStatus(user.orgId)
+    }
 
-  return context.orgStatus
+    return context.orgStatus
 }
 ```
 
@@ -598,13 +601,13 @@ export const fastAccess: Access = ({ req: { user, context } }) => {
 ```ts
 // ❌ Avoid: Non-indexed fields in constraints
 export const slowQuery: Access = () => ({
-  'metadata.internalCode': { equals: 'ABC123' }, // Slow if not indexed
+    'metadata.internalCode': { equals: 'ABC123' }, // Slow if not indexed
 })
 
 // ✅ Better: Use indexed fields
 export const fastQuery: Access = () => ({
-  status: { equals: 'active' }, // Indexed field
-  organizationId: { in: ['org1', 'org2'] }, // Indexed field
+    status: { equals: 'active' }, // Indexed field
+    organizationId: { in: ['org1', 'org2'] }, // Indexed field
 })
 ```
 
@@ -613,42 +616,42 @@ export const fastQuery: Access = () => ({
 ```ts
 // ❌ Slow: Complex access on array fields
 const arrayField: ArrayField = {
-  name: 'items',
-  type: 'array',
-  fields: [
-    {
-      name: 'secretData',
-      type: 'text',
-      access: {
-        read: async ({ req }) => {
-          // Async call runs for EVERY array item
-          const result = await expensiveCheck()
-          return result
+    name: 'items',
+    type: 'array',
+    fields: [
+        {
+            name: 'secretData',
+            type: 'text',
+            access: {
+                read: async ({ req }) => {
+                    // Async call runs for EVERY array item
+                    const result = await expensiveCheck()
+                    return result
+                },
+            },
         },
-      },
-    },
-  ],
+    ],
 }
 
 // ✅ Fast: Simple checks or cache result
 const optimizedArrayField: ArrayField = {
-  name: 'items',
-  type: 'array',
-  fields: [
-    {
-      name: 'secretData',
-      type: 'text',
-      access: {
-        read: ({ req: { user }, context }) => {
-          // Cache once, reuse for all items
-          if (context.canReadSecret === undefined) {
-            context.canReadSecret = user?.roles?.includes('admin')
-          }
-          return context.canReadSecret
+    name: 'items',
+    type: 'array',
+    fields: [
+        {
+            name: 'secretData',
+            type: 'text',
+            access: {
+                read: ({ req: { user }, context }) => {
+                    // Cache once, reuse for all items
+                    if (context.canReadSecret === undefined) {
+                        context.canReadSecret = user?.roles?.includes('admin')
+                    }
+                    return context.canReadSecret
+                },
+            },
         },
-      },
-    },
-  ],
+    ],
 }
 ```
 
@@ -657,14 +660,14 @@ const optimizedArrayField: ArrayField = {
 ```ts
 // ❌ N+1 Problem: Query per access check
 export const n1Access: Access = async ({ req, id }) => {
-  // Runs for EACH document in list
-  const doc = await req.payload.findByID({ collection: 'docs', id })
-  return doc.isPublic
+    // Runs for EACH document in list
+    const doc = await req.payload.findByID({ collection: 'docs', id })
+    return doc.isPublic
 }
 
 // ✅ Better: Use query constraint to filter at DB level
 export const efficientAccess: Access = () => {
-  return { isPublic: { equals: true } }
+    return { isPublic: { equals: true } }
 }
 ```
 

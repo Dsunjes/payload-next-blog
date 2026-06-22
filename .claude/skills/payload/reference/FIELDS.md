@@ -8,21 +8,21 @@ Complete reference for all Payload field types with examples.
 import type { TextField } from 'payload'
 
 const textField: TextField = {
-  name: 'title',
-  type: 'text',
-  required: true,
-  unique: true,
-  minLength: 5,
-  maxLength: 100,
-  index: true,
-  localized: true,
-  defaultValue: 'Default Title',
-  validate: (value) => Boolean(value) || 'Required',
-  admin: {
-    placeholder: 'Enter title...',
-    position: 'sidebar',
-    condition: (data) => data.showTitle === true,
-  },
+    name: 'title',
+    type: 'text',
+    required: true,
+    unique: true,
+    minLength: 5,
+    maxLength: 100,
+    index: true,
+    localized: true,
+    defaultValue: 'Default Title',
+    validate: (value) => Boolean(value) || 'Required',
+    admin: {
+        placeholder: 'Enter title...',
+        position: 'sidebar',
+        condition: (data) => data.showTitle === true,
+    },
 }
 ```
 
@@ -35,21 +35,21 @@ import { slugField } from 'payload'
 import type { CollectionConfig } from 'payload'
 
 export const Pages: CollectionConfig = {
-  slug: 'pages',
-  fields: [
-    { name: 'title', type: 'text', required: true },
-    slugField({
-      name: 'slug', // defaults to 'slug'
-      useAsSlug: 'title', // defaults to 'title'
-      checkboxName: 'generateSlug', // defaults to 'generateSlug'
-      localized: true,
-      required: true,
-      overrides: (defaultField) => {
-        // Customize the generated fields if needed
-        return defaultField
-      },
-    }),
-  ],
+    slug: 'pages',
+    fields: [
+        { name: 'title', type: 'text', required: true },
+        slugField({
+            name: 'slug', // defaults to 'slug'
+            useAsSlug: 'title', // defaults to 'title'
+            checkboxName: 'generateSlug', // defaults to 'generateSlug'
+            localized: true,
+            required: true,
+            overrides: (defaultField) => {
+                // Customize the generated fields if needed
+                return defaultField
+            },
+        }),
+    ],
 }
 ```
 
@@ -61,21 +61,21 @@ import { lexicalEditor } from '@payloadcms/richtext-lexical'
 import { HeadingFeature, LinkFeature } from '@payloadcms/richtext-lexical'
 
 const richTextField: RichTextField = {
-  name: 'content',
-  type: 'richText',
-  required: true,
-  localized: true,
-  editor: lexicalEditor({
-    features: ({ defaultFeatures }) => [
-      ...defaultFeatures,
-      HeadingFeature({
-        enabledHeadingSizes: ['h1', 'h2', 'h3'],
-      }),
-      LinkFeature({
-        enabledCollections: ['posts', 'pages'],
-      }),
-    ],
-  }),
+    name: 'content',
+    type: 'richText',
+    required: true,
+    localized: true,
+    editor: lexicalEditor({
+        features: ({ defaultFeatures }) => [
+            ...defaultFeatures,
+            HeadingFeature({
+                enabledHeadingSizes: ['h1', 'h2', 'h3'],
+            }),
+            LinkFeature({
+                enabledCollections: ['posts', 'pages'],
+            }),
+        ],
+    }),
 }
 ```
 
@@ -83,74 +83,74 @@ const richTextField: RichTextField = {
 
 ```ts
 import {
-  BoldFeature,
-  EXPERIMENTAL_TableFeature,
-  FixedToolbarFeature,
-  HeadingFeature,
-  IndentFeature,
-  InlineToolbarFeature,
-  ItalicFeature,
-  LinkFeature,
-  OrderedListFeature,
-  UnderlineFeature,
-  UnorderedListFeature,
-  lexicalEditor,
+    BoldFeature,
+    EXPERIMENTAL_TableFeature,
+    FixedToolbarFeature,
+    HeadingFeature,
+    IndentFeature,
+    InlineToolbarFeature,
+    ItalicFeature,
+    LinkFeature,
+    OrderedListFeature,
+    UnderlineFeature,
+    UnorderedListFeature,
+    lexicalEditor,
 } from '@payloadcms/richtext-lexical'
 
 // Global editor config with full features
 export default buildConfig({
-  editor: lexicalEditor({
-    features: () => {
-      return [
-        UnderlineFeature(),
-        BoldFeature(),
-        ItalicFeature(),
-        OrderedListFeature(),
-        UnorderedListFeature(),
-        LinkFeature({
-          enabledCollections: ['pages'],
-          fields: ({ defaultFields }) => {
-            const defaultFieldsWithoutUrl = defaultFields.filter((field) => {
-              if ('name' in field && field.name === 'url') return false
-              return true
-            })
-
+    editor: lexicalEditor({
+        features: () => {
             return [
-              ...defaultFieldsWithoutUrl,
-              {
-                name: 'url',
-                type: 'text',
-                admin: {
-                  condition: ({ linkType }) => linkType !== 'internal',
-                },
-                label: ({ t }) => t('fields:enterURL'),
-                required: true,
-              },
+                UnderlineFeature(),
+                BoldFeature(),
+                ItalicFeature(),
+                OrderedListFeature(),
+                UnorderedListFeature(),
+                LinkFeature({
+                    enabledCollections: ['pages'],
+                    fields: ({ defaultFields }) => {
+                        const defaultFieldsWithoutUrl = defaultFields.filter((field) => {
+                            if ('name' in field && field.name === 'url') return false
+                            return true
+                        })
+
+                        return [
+                            ...defaultFieldsWithoutUrl,
+                            {
+                                name: 'url',
+                                type: 'text',
+                                admin: {
+                                    condition: ({ linkType }) => linkType !== 'internal',
+                                },
+                                label: ({ t }) => t('fields:enterURL'),
+                                required: true,
+                            },
+                        ]
+                    },
+                }),
+                IndentFeature(),
+                EXPERIMENTAL_TableFeature(),
             ]
-          },
-        }),
-        IndentFeature(),
-        EXPERIMENTAL_TableFeature(),
-      ]
-    },
-  }),
+        },
+    }),
 })
 
 // Field-specific editor with custom toolbar
 const richTextWithToolbars: RichTextField = {
-  name: 'richText',
-  type: 'richText',
-  editor: lexicalEditor({
-    features: ({ rootFeatures }) => {
-      return [
-        ...rootFeatures,
-        HeadingFeature({ enabledHeadingSizes: ['h2', 'h3', 'h4'] }),
-        FixedToolbarFeature(),
-        InlineToolbarFeature(),
-      ]
-    },
-  }),
-  label: false,
+    name: 'richText',
+    type: 'richText',
+    editor: lexicalEditor({
+        features: ({ rootFeatures }) => {
+            return [
+                ...rootFeatures,
+                HeadingFeature({ enabledHeadingSizes: ['h2', 'h3', 'h4'] }),
+                FixedToolbarFeature(),
+                InlineToolbarFeature(),
+            ]
+        },
+    }),
+    label: false,
 }
 ```
 
@@ -161,30 +161,30 @@ import type { RelationshipField } from 'payload'
 
 // Single relationship
 const singleRelationship: RelationshipField = {
-  name: 'author',
-  type: 'relationship',
-  relationTo: 'users',
-  required: true,
-  maxDepth: 2,
+    name: 'author',
+    type: 'relationship',
+    relationTo: 'users',
+    required: true,
+    maxDepth: 2,
 }
 
 // Multiple relationships (hasMany)
 const multipleRelationship: RelationshipField = {
-  name: 'categories',
-  type: 'relationship',
-  relationTo: 'categories',
-  hasMany: true,
-  filterOptions: {
-    active: { equals: true },
-  },
+    name: 'categories',
+    type: 'relationship',
+    relationTo: 'categories',
+    hasMany: true,
+    filterOptions: {
+        active: { equals: true },
+    },
 }
 
 // Polymorphic relationship
 const polymorphicRelationship: PolymorphicRelationshipField = {
-  name: 'relatedContent',
-  type: 'relationship',
-  relationTo: ['posts', 'pages'],
-  hasMany: true,
+    name: 'relatedContent',
+    type: 'relationship',
+    relationTo: ['posts', 'pages'],
+    hasMany: true,
 }
 ```
 
@@ -194,29 +194,29 @@ const polymorphicRelationship: PolymorphicRelationshipField = {
 import type { ArrayField } from 'payload'
 
 const arrayField: ArrayField = {
-  name: 'slides',
-  type: 'array',
-  minRows: 2,
-  maxRows: 10,
-  labels: {
-    singular: 'Slide',
-    plural: 'Slides',
-  },
-  fields: [
-    {
-      name: 'title',
-      type: 'text',
-      required: true,
+    name: 'slides',
+    type: 'array',
+    minRows: 2,
+    maxRows: 10,
+    labels: {
+        singular: 'Slide',
+        plural: 'Slides',
     },
-    {
-      name: 'image',
-      type: 'upload',
-      relationTo: 'media',
+    fields: [
+        {
+            name: 'title',
+            type: 'text',
+            required: true,
+        },
+        {
+            name: 'image',
+            type: 'upload',
+            relationTo: 'media',
+        },
+    ],
+    admin: {
+        initCollapsed: true,
     },
-  ],
-  admin: {
-    initCollapsed: true,
-  },
 }
 ```
 
@@ -226,36 +226,36 @@ const arrayField: ArrayField = {
 import type { BlocksField, Block } from 'payload'
 
 const HeroBlock: Block = {
-  slug: 'hero',
-  interfaceName: 'HeroBlock',
-  fields: [
-    {
-      name: 'heading',
-      type: 'text',
-      required: true,
-    },
-    {
-      name: 'background',
-      type: 'upload',
-      relationTo: 'media',
-    },
-  ],
+    slug: 'hero',
+    interfaceName: 'HeroBlock',
+    fields: [
+        {
+            name: 'heading',
+            type: 'text',
+            required: true,
+        },
+        {
+            name: 'background',
+            type: 'upload',
+            relationTo: 'media',
+        },
+    ],
 }
 
 const ContentBlock: Block = {
-  slug: 'content',
-  fields: [
-    {
-      name: 'text',
-      type: 'richText',
-    },
-  ],
+    slug: 'content',
+    fields: [
+        {
+            name: 'text',
+            type: 'richText',
+        },
+    ],
 }
 
 const blocksField: BlocksField = {
-  name: 'layout',
-  type: 'blocks',
-  blocks: [HeroBlock, ContentBlock],
+    name: 'layout',
+    type: 'blocks',
+    blocks: [HeroBlock, ContentBlock],
 }
 ```
 
@@ -265,22 +265,22 @@ const blocksField: BlocksField = {
 import type { SelectField } from 'payload'
 
 const selectField: SelectField = {
-  name: 'status',
-  type: 'select',
-  options: [
-    { label: 'Draft', value: 'draft' },
-    { label: 'Published', value: 'published' },
-  ],
-  defaultValue: 'draft',
-  required: true,
+    name: 'status',
+    type: 'select',
+    options: [
+        { label: 'Draft', value: 'draft' },
+        { label: 'Published', value: 'published' },
+    ],
+    defaultValue: 'draft',
+    required: true,
 }
 
 // Multiple select
 const multiSelectField: SelectField = {
-  name: 'tags',
-  type: 'select',
-  hasMany: true,
-  options: ['tech', 'news', 'sports'],
+    name: 'tags',
+    type: 'select',
+    hasMany: true,
+    options: ['tech', 'news', 'sports'],
 }
 ```
 
@@ -290,13 +290,13 @@ const multiSelectField: SelectField = {
 import type { UploadField } from 'payload'
 
 const uploadField: UploadField = {
-  name: 'featuredImage',
-  type: 'upload',
-  relationTo: 'media',
-  required: true,
-  filterOptions: {
-    mimeType: { contains: 'image' },
-  },
+    name: 'featuredImage',
+    type: 'upload',
+    relationTo: 'media',
+    required: true,
+    filterOptions: {
+        mimeType: { contains: 'image' },
+    },
 }
 ```
 
@@ -308,10 +308,10 @@ Point fields store geographic coordinates with automatic 2dsphere indexing for g
 import type { PointField } from 'payload'
 
 const locationField: PointField = {
-  name: 'location',
-  type: 'point',
-  label: 'Location',
-  required: true,
+    name: 'location',
+    type: 'point',
+    label: 'Location',
+    required: true,
 }
 
 // Returns [longitude, latitude]
@@ -323,48 +323,48 @@ const locationField: PointField = {
 ```ts
 // Query by distance (sorted by nearest first)
 const nearbyLocations = await payload.find({
-  collection: 'stores',
-  where: {
-    location: {
-      near: [10, 20], // [longitude, latitude]
-      maxDistance: 5000, // in meters
-      minDistance: 1000,
+    collection: 'stores',
+    where: {
+        location: {
+            near: [10, 20], // [longitude, latitude]
+            maxDistance: 5000, // in meters
+            minDistance: 1000,
+        },
     },
-  },
 })
 
 // Query within polygon area
 const polygon: Point[] = [
-  [9.0, 19.0], // bottom-left
-  [9.0, 21.0], // top-left
-  [11.0, 21.0], // top-right
-  [11.0, 19.0], // bottom-right
-  [9.0, 19.0], // closing point
+    [9.0, 19.0], // bottom-left
+    [9.0, 21.0], // top-left
+    [11.0, 21.0], // top-right
+    [11.0, 19.0], // bottom-right
+    [9.0, 19.0], // closing point
 ]
 
 const withinArea = await payload.find({
-  collection: 'stores',
-  where: {
-    location: {
-      within: {
-        type: 'Polygon',
-        coordinates: [polygon],
-      },
+    collection: 'stores',
+    where: {
+        location: {
+            within: {
+                type: 'Polygon',
+                coordinates: [polygon],
+            },
+        },
     },
-  },
 })
 
 // Query intersecting area
 const intersecting = await payload.find({
-  collection: 'stores',
-  where: {
-    location: {
-      intersects: {
-        type: 'Polygon',
-        coordinates: [polygon],
-      },
+    collection: 'stores',
+    where: {
+        location: {
+            intersects: {
+                type: 'Polygon',
+                coordinates: [polygon],
+            },
+        },
     },
-  },
 })
 ```
 
@@ -379,26 +379,26 @@ import type { JoinField } from 'payload'
 
 // From Users collection - show user's orders
 const ordersJoinField: JoinField = {
-  name: 'orders',
-  type: 'join',
-  collection: 'orders',
-  on: 'customer', // The field in 'orders' that references this user
-  admin: {
-    allowCreate: false,
-    defaultColumns: ['id', 'createdAt', 'total', 'currency', 'items'],
-  },
+    name: 'orders',
+    type: 'join',
+    collection: 'orders',
+    on: 'customer', // The field in 'orders' that references this user
+    admin: {
+        allowCreate: false,
+        defaultColumns: ['id', 'createdAt', 'total', 'currency', 'items'],
+    },
 }
 
 // From Users collection - show user's cart
 const cartJoinField: JoinField = {
-  name: 'cart',
-  type: 'join',
-  collection: 'carts',
-  on: 'customer',
-  admin: {
-    allowCreate: false,
-    defaultColumns: ['id', 'createdAt', 'total', 'currency'],
-  },
+    name: 'cart',
+    type: 'join',
+    collection: 'carts',
+    on: 'customer',
+    admin: {
+        allowCreate: false,
+        defaultColumns: ['id', 'createdAt', 'total', 'currency'],
+    },
 }
 ```
 
@@ -409,19 +409,19 @@ import type { TextField } from 'payload'
 
 // Computed from siblings
 const computedVirtualField: TextField = {
-  name: 'fullName',
-  type: 'text',
-  virtual: true,
-  hooks: {
-    afterRead: [({ siblingData }) => `${siblingData.firstName} ${siblingData.lastName}`],
-  },
+    name: 'fullName',
+    type: 'text',
+    virtual: true,
+    hooks: {
+        afterRead: [({ siblingData }) => `${siblingData.firstName} ${siblingData.lastName}`],
+    },
 }
 
 // From relationship path
 const pathVirtualField: TextField = {
-  name: 'authorName',
-  type: 'text',
-  virtual: 'author.name',
+    name: 'authorName',
+    type: 'text',
+    virtual: 'author.name',
 }
 ```
 
@@ -432,34 +432,34 @@ import type { UploadField, CheckboxField } from 'payload'
 
 // Simple boolean condition
 const enableFeatureField: CheckboxField = {
-  name: 'enableFeature',
-  type: 'checkbox',
+    name: 'enableFeature',
+    type: 'checkbox',
 }
 
 const conditionalField: TextField = {
-  name: 'featureText',
-  type: 'text',
-  admin: {
-    condition: (data) => data.enableFeature === true,
-  },
+    name: 'featureText',
+    type: 'text',
+    admin: {
+        condition: (data) => data.enableFeature === true,
+    },
 }
 
 // Sibling data condition (from hero field pattern)
 const typeField: SelectField = {
-  name: 'type',
-  type: 'select',
-  options: ['none', 'highImpact', 'mediumImpact', 'lowImpact'],
-  defaultValue: 'lowImpact',
+    name: 'type',
+    type: 'select',
+    options: ['none', 'highImpact', 'mediumImpact', 'lowImpact'],
+    defaultValue: 'lowImpact',
 }
 
 const mediaField: UploadField = {
-  name: 'media',
-  type: 'upload',
-  relationTo: 'media',
-  admin: {
-    condition: (_, { type } = {}) => ['highImpact', 'mediumImpact'].includes(type),
-  },
-  required: true,
+    name: 'media',
+    type: 'upload',
+    relationTo: 'media',
+    admin: {
+        condition: (_, { type } = {}) => ['highImpact', 'mediumImpact'].includes(type),
+    },
+    required: true,
 }
 ```
 
@@ -471,17 +471,17 @@ Radio fields present options as radio buttons for single selection.
 import type { RadioField } from 'payload'
 
 const radioField: RadioField = {
-  name: 'priority',
-  type: 'radio',
-  options: [
-    { label: 'Low', value: 'low' },
-    { label: 'Medium', value: 'medium' },
-    { label: 'High', value: 'high' },
-  ],
-  defaultValue: 'medium',
-  admin: {
-    layout: 'horizontal', // or 'vertical'
-  },
+    name: 'priority',
+    type: 'radio',
+    options: [
+        { label: 'Low', value: 'low' },
+        { label: 'Medium', value: 'medium' },
+        { label: 'High', value: 'high' },
+    ],
+    defaultValue: 'medium',
+    admin: {
+        layout: 'horizontal', // or 'vertical'
+    },
 }
 ```
 
@@ -493,19 +493,19 @@ Row fields arrange fields horizontally in the admin panel (presentational only).
 import type { RowField } from 'payload'
 
 const rowField: RowField = {
-  type: 'row',
-  fields: [
-    {
-      name: 'firstName',
-      type: 'text',
-      admin: { width: '50%' },
-    },
-    {
-      name: 'lastName',
-      type: 'text',
-      admin: { width: '50%' },
-    },
-  ],
+    type: 'row',
+    fields: [
+        {
+            name: 'firstName',
+            type: 'text',
+            admin: { width: '50%' },
+        },
+        {
+            name: 'lastName',
+            type: 'text',
+            admin: { width: '50%' },
+        },
+    ],
 }
 ```
 
@@ -517,15 +517,15 @@ Collapsible fields group fields in an expandable/collapsible section.
 import type { CollapsibleField } from 'payload'
 
 const collapsibleField: CollapsibleField = {
-  label: ({ data }) => data?.title || 'Advanced Options',
-  type: 'collapsible',
-  admin: {
-    initCollapsed: true,
-  },
-  fields: [
-    { name: 'customCSS', type: 'textarea' },
-    { name: 'customJS', type: 'code' },
-  ],
+    label: ({ data }) => data?.title || 'Advanced Options',
+    type: 'collapsible',
+    admin: {
+        initCollapsed: true,
+    },
+    fields: [
+        { name: 'customCSS', type: 'textarea' },
+        { name: 'customJS', type: 'code' },
+    ],
 }
 ```
 
@@ -537,14 +537,14 @@ UI fields allow fully custom React components in the admin (no data stored).
 import type { UIField } from 'payload'
 
 const uiField: UIField = {
-  name: 'customMessage',
-  type: 'ui',
-  admin: {
-    components: {
-      Field: '/path/to/CustomFieldComponent',
-      Cell: '/path/to/CustomCellComponent', // For list view
+    name: 'customMessage',
+    type: 'ui',
+    admin: {
+        components: {
+            Field: '/path/to/CustomFieldComponent',
+            Cell: '/path/to/CustomCellComponent', // For list view
+        },
     },
-  },
 }
 ```
 
@@ -555,33 +555,33 @@ import type { TabsField, GroupField } from 'payload'
 
 // Tabs
 const tabsField: TabsField = {
-  type: 'tabs',
-  tabs: [
-    {
-      label: 'Content',
-      fields: [
-        { name: 'title', type: 'text' },
-        { name: 'body', type: 'richText' },
-      ],
-    },
-    {
-      label: 'SEO',
-      fields: [
-        { name: 'metaTitle', type: 'text' },
-        { name: 'metaDescription', type: 'textarea' },
-      ],
-    },
-  ],
+    type: 'tabs',
+    tabs: [
+        {
+            label: 'Content',
+            fields: [
+                { name: 'title', type: 'text' },
+                { name: 'body', type: 'richText' },
+            ],
+        },
+        {
+            label: 'SEO',
+            fields: [
+                { name: 'metaTitle', type: 'text' },
+                { name: 'metaDescription', type: 'textarea' },
+            ],
+        },
+    ],
 }
 
 // Group (named)
 const groupField: GroupField = {
-  name: 'meta',
-  type: 'group',
-  fields: [
-    { name: 'title', type: 'text' },
-    { name: 'description', type: 'textarea' },
-  ],
+    name: 'meta',
+    type: 'group',
+    fields: [
+        { name: 'title', type: 'text' },
+        { name: 'description', type: 'textarea' },
+    ],
 }
 ```
 
@@ -594,108 +594,108 @@ import type { Field, GroupField } from 'payload'
 
 // Utility for deep merging
 const deepMerge = <T>(target: T, source: Partial<T>): T => {
-  // Implementation would deeply merge objects
-  return { ...target, ...source }
+    // Implementation would deeply merge objects
+    return { ...target, ...source }
 }
 
 // Reusable link field factory
 type LinkType = (options?: {
-  appearances?: ('default' | 'outline')[] | false
-  disableLabel?: boolean
-  overrides?: Record<string, unknown>
+    appearances?: ('default' | 'outline')[] | false
+    disableLabel?: boolean
+    overrides?: Record<string, unknown>
 }) => GroupField
 
 export const link: LinkType = ({ appearances, disableLabel = false, overrides = {} } = {}) => {
-  const linkField: GroupField = {
-    name: 'link',
-    type: 'group',
-    admin: {
-      hideGutter: true,
-    },
-    fields: [
-      {
-        type: 'row',
+    const linkField: GroupField = {
+        name: 'link',
+        type: 'group',
+        admin: {
+            hideGutter: true,
+        },
         fields: [
-          {
-            name: 'type',
-            type: 'radio',
-            options: [
-              { label: 'Internal link', value: 'reference' },
-              { label: 'Custom URL', value: 'custom' },
-            ],
-            defaultValue: 'reference',
-            admin: {
-              layout: 'horizontal',
-              width: '50%',
+            {
+                type: 'row',
+                fields: [
+                    {
+                        name: 'type',
+                        type: 'radio',
+                        options: [
+                            { label: 'Internal link', value: 'reference' },
+                            { label: 'Custom URL', value: 'custom' },
+                        ],
+                        defaultValue: 'reference',
+                        admin: {
+                            layout: 'horizontal',
+                            width: '50%',
+                        },
+                    },
+                    {
+                        name: 'newTab',
+                        type: 'checkbox',
+                        label: 'Open in new tab',
+                        admin: {
+                            width: '50%',
+                            style: {
+                                alignSelf: 'flex-end',
+                            },
+                        },
+                    },
+                ],
             },
-          },
-          {
-            name: 'newTab',
-            type: 'checkbox',
-            label: 'Open in new tab',
-            admin: {
-              width: '50%',
-              style: {
-                alignSelf: 'flex-end',
-              },
+            {
+                name: 'reference',
+                type: 'relationship',
+                relationTo: ['pages'],
+                required: true,
+                maxDepth: 1,
+                admin: {
+                    condition: (_, siblingData) => siblingData?.type === 'reference',
+                },
             },
-          },
+            {
+                name: 'url',
+                type: 'text',
+                label: 'Custom URL',
+                required: true,
+                admin: {
+                    condition: (_, siblingData) => siblingData?.type === 'custom',
+                },
+            },
         ],
-      },
-      {
-        name: 'reference',
-        type: 'relationship',
-        relationTo: ['pages'],
-        required: true,
-        maxDepth: 1,
-        admin: {
-          condition: (_, siblingData) => siblingData?.type === 'reference',
-        },
-      },
-      {
-        name: 'url',
-        type: 'text',
-        label: 'Custom URL',
-        required: true,
-        admin: {
-          condition: (_, siblingData) => siblingData?.type === 'custom',
-        },
-      },
-    ],
-  }
+    }
 
-  if (!disableLabel) {
-    linkField.fields.push({
-      name: 'label',
-      type: 'text',
-      required: true,
-    })
-  }
+    if (!disableLabel) {
+        linkField.fields.push({
+            name: 'label',
+            type: 'text',
+            required: true,
+        })
+    }
 
-  if (appearances !== false) {
-    linkField.fields.push({
-      name: 'appearance',
-      type: 'select',
-      defaultValue: 'default',
-      options: [
-        { label: 'Default', value: 'default' },
-        { label: 'Outline', value: 'outline' },
-      ],
-    })
-  }
+    if (appearances !== false) {
+        linkField.fields.push({
+            name: 'appearance',
+            type: 'select',
+            defaultValue: 'default',
+            options: [
+                { label: 'Default', value: 'default' },
+                { label: 'Outline', value: 'outline' },
+            ],
+        })
+    }
 
-  return deepMerge(linkField, overrides) as GroupField
+    return deepMerge(linkField, overrides) as GroupField
 }
 
 // Usage
 const navItem = link({ appearances: false })
 const ctaButton = link({
-  overrides: {
-    name: 'cta',
-    admin: {
-      description: 'Call to action button',
+    overrides: {
+        name: 'cta',
+        admin: {
+            description: 'Call to action button',
+        },
     },
-  },
 })
 ```
 
@@ -729,15 +729,15 @@ Type guards for runtime field type checking and safe type narrowing.
 import { fieldAffectsData, fieldHasSubFields, fieldIsArrayType } from 'payload'
 
 function processField(field: Field) {
-  if (fieldAffectsData(field)) {
-    // Safe to access field.name
-    console.log(field.name)
-  }
+    if (fieldAffectsData(field)) {
+        // Safe to access field.name
+        console.log(field.name)
+    }
 
-  if (fieldHasSubFields(field)) {
-    // Safe to access field.fields
-    field.fields.forEach(processField)
-  }
+    if (fieldHasSubFields(field)) {
+        // Safe to access field.fields
+        field.fields.forEach(processField)
+    }
 }
 ```
 

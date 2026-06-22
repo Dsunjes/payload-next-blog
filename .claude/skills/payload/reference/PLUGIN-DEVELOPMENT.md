@@ -10,16 +10,16 @@ Plugins are functions that receive configuration options and return a function t
 import type { Config, Plugin } from 'payload'
 
 interface MyPluginConfig {
-  enabled?: boolean
-  collections?: string[]
+    enabled?: boolean
+    collections?: string[]
 }
 
 export const myPlugin =
-  (options: MyPluginConfig): Plugin =>
-  (config: Config): Config => ({
-    ...config,
-    // Transform config here
-  })
+    (options: MyPluginConfig): Plugin =>
+    (config: Config): Config => ({
+        ...config,
+        // Transform config here
+    })
 ```
 
 **Key Pattern:** Double arrow function (currying)
@@ -93,73 +93,73 @@ plugin-<name>/
 
 ```json
 {
-  "name": "payload-plugin-example",
-  "version": "1.0.0",
-  "description": "A Payload CMS plugin",
-  "type": "module",
-  "main": "./dist/index.js",
-  "types": "./dist/index.d.ts",
-  "exports": {
-    ".": {
-      "import": "./dist/index.js",
-      "types": "./dist/index.d.ts",
-      "default": "./dist/index.js"
+    "name": "payload-plugin-example",
+    "version": "1.0.0",
+    "description": "A Payload CMS plugin",
+    "type": "module",
+    "main": "./dist/index.js",
+    "types": "./dist/index.d.ts",
+    "exports": {
+        ".": {
+            "import": "./dist/index.js",
+            "types": "./dist/index.d.ts",
+            "default": "./dist/index.js"
+        },
+        "./types": {
+            "import": "./dist/exports/types.js",
+            "types": "./dist/exports/types.d.ts"
+        },
+        "./client": {
+            "import": "./dist/exports/client.js",
+            "types": "./dist/exports/client.d.ts"
+        },
+        "./rsc": {
+            "import": "./dist/exports/rsc.js",
+            "types": "./dist/exports/rsc.d.ts"
+        }
     },
-    "./types": {
-      "import": "./dist/exports/types.js",
-      "types": "./dist/exports/types.d.ts"
+    "files": ["dist"],
+    "scripts": {
+        "build": "npm run copyfiles && npm run build:types && npm run build:swc",
+        "build:swc": "swc ./src -d ./dist --config-file .swcrc --strip-leading-paths",
+        "build:types": "tsc --emitDeclarationOnly --outDir dist",
+        "clean": "rimraf dist *.tsbuildinfo",
+        "copyfiles": "copyfiles -u 1 \"src/**/*.{html,css,scss,ttf,woff,woff2,eot,svg,jpg,png,json}\" dist/",
+        "dev": "next dev dev --turbo",
+        "dev:generate-types": "cross-env PAYLOAD_CONFIG_PATH=./dev/payload.config.ts payload generate:types",
+        "dev:payload": "cross-env PAYLOAD_CONFIG_PATH=./dev/payload.config.ts payload",
+        "test": "npm run test:int && npm run test:e2e",
+        "test:int": "vitest",
+        "test:e2e": "playwright test",
+        "lint": "eslint",
+        "lint:fix": "eslint ./src --fix",
+        "prepublishOnly": "npm run clean && npm run build"
     },
-    "./client": {
-      "import": "./dist/exports/client.js",
-      "types": "./dist/exports/client.d.ts"
+    "dependencies": {
+        "@payloadcms/translations": "^3.0.0",
+        "@payloadcms/ui": "^3.0.0"
     },
-    "./rsc": {
-      "import": "./dist/exports/rsc.js",
-      "types": "./dist/exports/rsc.d.ts"
+    "devDependencies": {
+        "@payloadcms/db-mongodb": "^3.0.0",
+        "@payloadcms/next": "^3.0.0",
+        "@payloadcms/richtext-lexical": "^3.0.0",
+        "@playwright/test": "^1.40.0",
+        "@swc/cli": "^0.1.62",
+        "@swc/core": "^1.3.0",
+        "copyfiles": "^2.4.1",
+        "cross-env": "^7.0.3",
+        "eslint": "^9.0.0",
+        "next": "^15.4.10",
+        "payload": "^3.0.0",
+        "react": "^19.2.1",
+        "react-dom": "^19.2.1",
+        "rimraf": "^5.0.0",
+        "typescript": "^5.0.0",
+        "vitest": "^3.0.0"
+    },
+    "peerDependencies": {
+        "payload": "^3.0.0"
     }
-  },
-  "files": ["dist"],
-  "scripts": {
-    "build": "npm run copyfiles && npm run build:types && npm run build:swc",
-    "build:swc": "swc ./src -d ./dist --config-file .swcrc --strip-leading-paths",
-    "build:types": "tsc --emitDeclarationOnly --outDir dist",
-    "clean": "rimraf dist *.tsbuildinfo",
-    "copyfiles": "copyfiles -u 1 \"src/**/*.{html,css,scss,ttf,woff,woff2,eot,svg,jpg,png,json}\" dist/",
-    "dev": "next dev dev --turbo",
-    "dev:generate-types": "cross-env PAYLOAD_CONFIG_PATH=./dev/payload.config.ts payload generate:types",
-    "dev:payload": "cross-env PAYLOAD_CONFIG_PATH=./dev/payload.config.ts payload",
-    "test": "npm run test:int && npm run test:e2e",
-    "test:int": "vitest",
-    "test:e2e": "playwright test",
-    "lint": "eslint",
-    "lint:fix": "eslint ./src --fix",
-    "prepublishOnly": "npm run clean && npm run build"
-  },
-  "dependencies": {
-    "@payloadcms/translations": "^3.0.0",
-    "@payloadcms/ui": "^3.0.0"
-  },
-  "devDependencies": {
-    "@payloadcms/db-mongodb": "^3.0.0",
-    "@payloadcms/next": "^3.0.0",
-    "@payloadcms/richtext-lexical": "^3.0.0",
-    "@playwright/test": "^1.40.0",
-    "@swc/cli": "^0.1.62",
-    "@swc/core": "^1.3.0",
-    "copyfiles": "^2.4.1",
-    "cross-env": "^7.0.3",
-    "eslint": "^9.0.0",
-    "next": "^15.4.10",
-    "payload": "^3.0.0",
-    "react": "^19.2.1",
-    "react-dom": "^19.2.1",
-    "rimraf": "^5.0.0",
-    "typescript": "^5.0.0",
-    "vitest": "^3.0.0"
-  },
-  "peerDependencies": {
-    "payload": "^3.0.0"
-  }
 }
 ```
 
@@ -183,32 +183,32 @@ plugin-<name>/
 import type { Config, Plugin, Field } from 'payload'
 
 export const seoPlugin =
-  (options: { collections?: string[] }): Plugin =>
-  (config: Config): Config => {
-    const seoFields: Field[] = [
-      {
-        name: 'meta',
-        type: 'group',
-        fields: [
-          { name: 'title', type: 'text' },
-          { name: 'description', type: 'textarea' },
-        ],
-      },
-    ]
+    (options: { collections?: string[] }): Plugin =>
+    (config: Config): Config => {
+        const seoFields: Field[] = [
+            {
+                name: 'meta',
+                type: 'group',
+                fields: [
+                    { name: 'title', type: 'text' },
+                    { name: 'description', type: 'textarea' },
+                ],
+            },
+        ]
 
-    return {
-      ...config,
-      collections: config.collections?.map((collection) => {
-        if (options.collections?.includes(collection.slug)) {
-          return {
-            ...collection,
-            fields: [...(collection.fields || []), ...seoFields],
-          }
+        return {
+            ...config,
+            collections: config.collections?.map((collection) => {
+                if (options.collections?.includes(collection.slug)) {
+                    return {
+                        ...collection,
+                        fields: [...(collection.fields || []), ...seoFields],
+                    }
+                }
+                return collection
+            }),
         }
-        return collection
-      }),
     }
-  }
 ```
 
 ### Adding New Collections
@@ -217,23 +217,23 @@ export const seoPlugin =
 import type { Config, Plugin, CollectionConfig } from 'payload'
 
 export const redirectsPlugin =
-  (options: { overrides?: Partial<CollectionConfig> }): Plugin =>
-  (config: Config): Config => {
-    const redirectsCollection: CollectionConfig = {
-      slug: 'redirects',
-      access: { read: () => true },
-      fields: [
-        { name: 'from', type: 'text', required: true, unique: true },
-        { name: 'to', type: 'text', required: true },
-      ],
-      ...options.overrides,
-    }
+    (options: { overrides?: Partial<CollectionConfig> }): Plugin =>
+    (config: Config): Config => {
+        const redirectsCollection: CollectionConfig = {
+            slug: 'redirects',
+            access: { read: () => true },
+            fields: [
+                { name: 'from', type: 'text', required: true, unique: true },
+                { name: 'to', type: 'text', required: true },
+            ],
+            ...options.overrides,
+        }
 
-    return {
-      ...config,
-      collections: [...(config.collections || []), redirectsCollection],
+        return {
+            ...config,
+            collections: [...(config.collections || []), redirectsCollection],
+        }
     }
-  }
 ```
 
 ### Adding Hooks
@@ -242,41 +242,41 @@ export const redirectsPlugin =
 import type { Config, Plugin, CollectionAfterChangeHook } from 'payload'
 
 const resaveChildrenHook: CollectionAfterChangeHook = async ({ doc, req, operation }) => {
-  if (operation === 'update') {
-    // Resave child documents
-    const children = await req.payload.find({
-      collection: 'pages',
-      where: { parent: { equals: doc.id } },
-    })
+    if (operation === 'update') {
+        // Resave child documents
+        const children = await req.payload.find({
+            collection: 'pages',
+            where: { parent: { equals: doc.id } },
+        })
 
-    for (const child of children.docs) {
-      await req.payload.update({
-        collection: 'pages',
-        id: child.id,
-        data: child,
-      })
+        for (const child of children.docs) {
+            await req.payload.update({
+                collection: 'pages',
+                id: child.id,
+                data: child,
+            })
+        }
     }
-  }
-  return doc
+    return doc
 }
 
 export const nestedDocsPlugin =
-  (options: { collections: string[] }): Plugin =>
-  (config: Config): Config => ({
-    ...config,
-    collections: (config.collections || []).map((collection) => {
-      if (options.collections.includes(collection.slug)) {
-        return {
-          ...collection,
-          hooks: {
-            ...(collection.hooks || {}),
-            afterChange: [resaveChildrenHook, ...(collection.hooks?.afterChange || [])],
-          },
-        }
-      }
-      return collection
-    }),
-  })
+    (options: { collections: string[] }): Plugin =>
+    (config: Config): Config => ({
+        ...config,
+        collections: (config.collections || []).map((collection) => {
+            if (options.collections.includes(collection.slug)) {
+                return {
+                    ...collection,
+                    hooks: {
+                        ...(collection.hooks || {}),
+                        afterChange: [resaveChildrenHook, ...(collection.hooks?.afterChange || [])],
+                    },
+                }
+            }
+            return collection
+        }),
+    })
 ```
 
 ### Adding Root-Level Endpoints
@@ -287,23 +287,23 @@ Add endpoints at the root config level (accessible at `/api/<path>`):
 import type { Config, Plugin, Endpoint } from 'payload'
 
 export const seoPlugin =
-  (options: { generateTitle?: (doc: any) => string }): Plugin =>
-  (config: Config): Config => {
-    const generateTitleEndpoint: Endpoint = {
-      path: '/plugin-seo/generate-title',
-      method: 'post',
-      handler: async (req) => {
-        const data = await req.json?.()
-        const result = options.generateTitle ? options.generateTitle(data.doc) : ''
-        return Response.json({ result })
-      },
-    }
+    (options: { generateTitle?: (doc: any) => string }): Plugin =>
+    (config: Config): Config => {
+        const generateTitleEndpoint: Endpoint = {
+            path: '/plugin-seo/generate-title',
+            method: 'post',
+            handler: async (req) => {
+                const data = await req.json?.()
+                const result = options.generateTitle ? options.generateTitle(data.doc) : ''
+                return Response.json({ result })
+            },
+        }
 
-    return {
-      ...config,
-      endpoints: [...(config.endpoints ?? []), generateTitleEndpoint],
+        return {
+            ...config,
+            endpoints: [...(config.endpoints ?? []), generateTitleEndpoint],
+        }
     }
-  }
 ```
 
 **Example webhook endpoint:**
@@ -311,18 +311,18 @@ export const seoPlugin =
 ```ts
 // Useful for integrations like Stripe
 const webhookEndpoint: Endpoint = {
-  path: '/stripe/webhook',
-  method: 'post',
-  handler: async (req) => {
-    const signature = req.headers.get('stripe-signature')
-    const event = stripe.webhooks.constructEvent(
-      await req.text(),
-      signature,
-      process.env.STRIPE_WEBHOOK_SECRET,
-    )
-    // Handle webhook
-    return Response.json({ received: true })
-  },
+    path: '/stripe/webhook',
+    method: 'post',
+    handler: async (req) => {
+        const signature = req.headers.get('stripe-signature')
+        const event = stripe.webhooks.constructEvent(
+            await req.text(),
+            signature,
+            process.env.STRIPE_WEBHOOK_SECRET,
+        )
+        // Handle webhook
+        return Response.json({ received: true })
+    },
 }
 ```
 
@@ -334,36 +334,36 @@ import type { Config, Plugin, Field } from 'payload'
 type FieldsOverride = (args: { defaultFields: Field[] }) => Field[]
 
 interface PluginConfig {
-  collections?: string[]
-  fields?: FieldsOverride
+    collections?: string[]
+    fields?: FieldsOverride
 }
 
 export const myPlugin =
-  (options: PluginConfig): Plugin =>
-  (config: Config): Config => {
-    const defaultFields: Field[] = [
-      { name: 'title', type: 'text' },
-      { name: 'description', type: 'textarea' },
-    ]
+    (options: PluginConfig): Plugin =>
+    (config: Config): Config => {
+        const defaultFields: Field[] = [
+            { name: 'title', type: 'text' },
+            { name: 'description', type: 'textarea' },
+        ]
 
-    const fields =
-      options.fields && typeof options.fields === 'function'
-        ? options.fields({ defaultFields })
-        : defaultFields
+        const fields =
+            options.fields && typeof options.fields === 'function'
+                ? options.fields({ defaultFields })
+                : defaultFields
 
-    return {
-      ...config,
-      collections: config.collections?.map((collection) => {
-        if (options.collections?.includes(collection.slug)) {
-          return {
-            ...collection,
-            fields: [...(collection.fields || []), ...fields],
-          }
+        return {
+            ...config,
+            collections: config.collections?.map((collection) => {
+                if (options.collections?.includes(collection.slug)) {
+                    return {
+                        ...collection,
+                        fields: [...(collection.fields || []), ...fields],
+                    }
+                }
+                return collection
+            }),
         }
-        return collection
-      }),
     }
-  }
 ```
 
 ### Tabs UI Pattern
@@ -372,58 +372,60 @@ export const myPlugin =
 import type { Config, Plugin, TabsField, GroupField } from 'payload'
 
 export const seoPlugin =
-  (options: { tabbedUI?: boolean }): Plugin =>
-  (config: Config): Config => {
-    const seoFields: GroupField[] = [
-      {
-        name: 'meta',
-        type: 'group',
-        fields: [{ name: 'title', type: 'text' }],
-      },
-    ]
-
-    return {
-      ...config,
-      collections: config.collections?.map((collection) => {
-        if (options.tabbedUI) {
-          const seoTabs: TabsField[] = [
+    (options: { tabbedUI?: boolean }): Plugin =>
+    (config: Config): Config => {
+        const seoFields: GroupField[] = [
             {
-              type: 'tabs',
-              tabs: [
-                // If existing tabs, preserve them
-                ...(collection.fields?.[0]?.type === 'tabs'
-                  ? collection.fields[0].tabs
-                  : [
-                      {
-                        label: 'Content',
-                        fields: collection.fields || [],
-                      },
-                    ]),
-                // Add SEO tab
-                {
-                  label: 'SEO',
-                  fields: seoFields,
-                },
-              ],
+                name: 'meta',
+                type: 'group',
+                fields: [{ name: 'title', type: 'text' }],
             },
-          ]
-
-          return {
-            ...collection,
-            fields: [
-              ...seoTabs,
-              ...(collection.fields?.[0]?.type === 'tabs' ? collection.fields.slice(1) : []),
-            ],
-          }
-        }
+        ]
 
         return {
-          ...collection,
-          fields: [...(collection.fields || []), ...seoFields],
+            ...config,
+            collections: config.collections?.map((collection) => {
+                if (options.tabbedUI) {
+                    const seoTabs: TabsField[] = [
+                        {
+                            type: 'tabs',
+                            tabs: [
+                                // If existing tabs, preserve them
+                                ...(collection.fields?.[0]?.type === 'tabs'
+                                    ? collection.fields[0].tabs
+                                    : [
+                                          {
+                                              label: 'Content',
+                                              fields: collection.fields || [],
+                                          },
+                                      ]),
+                                // Add SEO tab
+                                {
+                                    label: 'SEO',
+                                    fields: seoFields,
+                                },
+                            ],
+                        },
+                    ]
+
+                    return {
+                        ...collection,
+                        fields: [
+                            ...seoTabs,
+                            ...(collection.fields?.[0]?.type === 'tabs'
+                                ? collection.fields.slice(1)
+                                : []),
+                        ],
+                    }
+                }
+
+                return {
+                    ...collection,
+                    fields: [...(collection.fields || []), ...seoFields],
+                }
+            }),
         }
-      }),
     }
-  }
 ```
 
 ### Disable Plugin Pattern
@@ -434,53 +436,53 @@ Allow users to disable plugin without removing it (important for database schema
 import type { Config, Plugin } from 'payload'
 
 interface PluginConfig {
-  disabled?: boolean
-  collections?: string[]
+    disabled?: boolean
+    collections?: string[]
 }
 
 export const myPlugin =
-  (options: PluginConfig): Plugin =>
-  (config: Config): Config => {
-    // Always add collections/fields for database schema consistency
-    if (!config.collections) {
-      config.collections = []
-    }
-
-    config.collections.push({
-      slug: 'plugin-collection',
-      fields: [{ name: 'title', type: 'text' }],
-    })
-
-    // Add fields to specified collections
-    if (options.collections) {
-      for (const collectionSlug of options.collections) {
-        const collection = config.collections.find((c) => c.slug === collectionSlug)
-        if (collection) {
-          collection.fields.push({
-            name: 'addedByPlugin',
-            type: 'text',
-          })
+    (options: PluginConfig): Plugin =>
+    (config: Config): Config => {
+        // Always add collections/fields for database schema consistency
+        if (!config.collections) {
+            config.collections = []
         }
-      }
+
+        config.collections.push({
+            slug: 'plugin-collection',
+            fields: [{ name: 'title', type: 'text' }],
+        })
+
+        // Add fields to specified collections
+        if (options.collections) {
+            for (const collectionSlug of options.collections) {
+                const collection = config.collections.find((c) => c.slug === collectionSlug)
+                if (collection) {
+                    collection.fields.push({
+                        name: 'addedByPlugin',
+                        type: 'text',
+                    })
+                }
+            }
+        }
+
+        // If disabled, return early but keep schema changes
+        if (options.disabled) {
+            return config
+        }
+
+        // Add endpoints, hooks, components only when enabled
+        config.endpoints = [
+            ...(config.endpoints ?? []),
+            {
+                path: '/my-endpoint',
+                method: 'get',
+                handler: async () => Response.json({ message: 'Hello' }),
+            },
+        ]
+
+        return config
     }
-
-    // If disabled, return early but keep schema changes
-    if (options.disabled) {
-      return config
-    }
-
-    // Add endpoints, hooks, components only when enabled
-    config.endpoints = [
-      ...(config.endpoints ?? []),
-      {
-        path: '/my-endpoint',
-        method: 'get',
-        handler: async () => Response.json({ message: 'Hello' }),
-      },
-    ]
-
-    return config
-  }
 ```
 
 ### Admin Components
@@ -491,22 +493,22 @@ Add custom UI components to the admin panel:
 import type { Config, Plugin } from 'payload'
 
 export const myPlugin =
-  (options: PluginConfig): Plugin =>
-  (config: Config): Config => {
-    if (!config.admin) config.admin = {}
-    if (!config.admin.components) config.admin.components = {}
-    if (!config.admin.components.beforeDashboard) {
-      config.admin.components.beforeDashboard = []
+    (options: PluginConfig): Plugin =>
+    (config: Config): Config => {
+        if (!config.admin) config.admin = {}
+        if (!config.admin.components) config.admin.components = {}
+        if (!config.admin.components.beforeDashboard) {
+            config.admin.components.beforeDashboard = []
+        }
+
+        // Add client component
+        config.admin.components.beforeDashboard.push('my-plugin-name/client#BeforeDashboardClient')
+
+        // Add server component (RSC)
+        config.admin.components.beforeDashboard.push('my-plugin-name/rsc#BeforeDashboardServer')
+
+        return config
     }
-
-    // Add client component
-    config.admin.components.beforeDashboard.push('my-plugin-name/client#BeforeDashboardClient')
-
-    // Add server component (RSC)
-    config.admin.components.beforeDashboard.push('my-plugin-name/rsc#BeforeDashboardServer')
-
-    return config
-  }
 ```
 
 **Component file structure:**
@@ -519,26 +521,26 @@ import { useEffect, useState } from 'react'
 import { formatAdminURL } from 'payload/shared'
 
 export const BeforeDashboardClient = () => {
-  const { config } = useConfig()
-  const [data, setData] = useState('')
+    const { config } = useConfig()
+    const [data, setData] = useState('')
 
-  useEffect(() => {
-    fetch(
-      formatAdminURL({
-        apiRoute: config.routes.api,
-        path: '/my-endpoint',
-      }),
-    )
-      .then((res) => res.json())
-      .then(setData)
-  }, [config.serverURL, config.routes.api])
+    useEffect(() => {
+        fetch(
+            formatAdminURL({
+                apiRoute: config.routes.api,
+                path: '/my-endpoint',
+            }),
+        )
+            .then((res) => res.json())
+            .then(setData)
+    }, [config.serverURL, config.routes.api])
 
-  return <div>Client Component: {data}</div>
+    return <div>Client Component: {data}</div>
 }
 
 // src/components/BeforeDashboardServer.tsx
 export const BeforeDashboardServer = () => {
-  return <div>Server Component</div>
+    return <div>Server Component</div>
 }
 
 // src/exports/client.ts
@@ -553,14 +555,14 @@ export { BeforeDashboardServer } from '../components/BeforeDashboardServer.js'
 ```ts
 // src/translations/index.ts
 export const translations = {
-  en: {
-    'plugin-name:fieldLabel': 'Field Label',
-    'plugin-name:fieldDescription': 'Field description',
-  },
-  es: {
-    'plugin-name:fieldLabel': 'Etiqueta del campo',
-    'plugin-name:fieldDescription': 'Descripción del campo',
-  },
+    en: {
+        'plugin-name:fieldLabel': 'Field Label',
+        'plugin-name:fieldDescription': 'Field description',
+    },
+    es: {
+        'plugin-name:fieldLabel': 'Etiqueta del campo',
+        'plugin-name:fieldDescription': 'Descripción del campo',
+    },
 }
 
 // src/plugin.ts
@@ -568,47 +570,47 @@ import { deepMergeSimple } from 'payload/shared'
 import { translations } from './translations/index.js'
 
 export const myPlugin =
-  (options: PluginConfig): Plugin =>
-  (config: Config): Config => ({
-    ...config,
-    i18n: {
-      ...config.i18n,
-      translations: deepMergeSimple(translations, config.i18n?.translations ?? {}),
-    },
-  })
+    (options: PluginConfig): Plugin =>
+    (config: Config): Config => ({
+        ...config,
+        i18n: {
+            ...config.i18n,
+            translations: deepMergeSimple(translations, config.i18n?.translations ?? {}),
+        },
+    })
 ```
 
 ### onInit Hook
 
 ```ts
 export const myPlugin =
-  (options: PluginConfig): Plugin =>
-  (config: Config): Config => {
-    const incomingOnInit = config.onInit
+    (options: PluginConfig): Plugin =>
+    (config: Config): Config => {
+        const incomingOnInit = config.onInit
 
-    config.onInit = async (payload) => {
-      // IMPORTANT: Call existing onInit first
-      if (incomingOnInit) await incomingOnInit(payload)
+        config.onInit = async (payload) => {
+            // IMPORTANT: Call existing onInit first
+            if (incomingOnInit) await incomingOnInit(payload)
 
-      // Plugin initialization
-      payload.logger.info('Plugin initialized')
+            // Plugin initialization
+            payload.logger.info('Plugin initialized')
 
-      // Example: Seed data
-      const { totalDocs } = await payload.count({
-        collection: 'plugin-collection',
-        where: { id: { equals: 'seeded-by-plugin' } },
-      })
+            // Example: Seed data
+            const { totalDocs } = await payload.count({
+                collection: 'plugin-collection',
+                where: { id: { equals: 'seeded-by-plugin' } },
+            })
 
-      if (totalDocs === 0) {
-        await payload.create({
-          collection: 'plugin-collection',
-          data: { id: 'seeded-by-plugin' },
-        })
-      }
+            if (totalDocs === 0) {
+                await payload.create({
+                    collection: 'plugin-collection',
+                    data: { id: 'seeded-by-plugin' },
+                })
+            }
+        }
+
+        return config
     }
-
-    return config
-  }
 ```
 
 ## TypeScript Patterns
@@ -621,26 +623,26 @@ import type { CollectionSlug, GlobalSlug, Field, CollectionConfig } from 'payloa
 export type FieldsOverride = (args: { defaultFields: Field[] }) => Field[]
 
 export interface MyPluginConfig {
-  /**
-   * Collections to enable this plugin for
-   */
-  collections?: CollectionSlug[]
-  /**
-   * Globals to enable this plugin for
-   */
-  globals?: GlobalSlug[]
-  /**
-   * Override default fields
-   */
-  fields?: FieldsOverride
-  /**
-   * Enable tabbed UI
-   */
-  tabbedUI?: boolean
-  /**
-   * Override collection config
-   */
-  overrides?: Partial<CollectionConfig>
+    /**
+     * Collections to enable this plugin for
+     */
+    collections?: CollectionSlug[]
+    /**
+     * Globals to enable this plugin for
+     */
+    globals?: GlobalSlug[]
+    /**
+     * Override default fields
+     */
+    fields?: FieldsOverride
+    /**
+     * Enable tabbed UI
+     */
+    tabbedUI?: boolean
+    /**
+     * Override collection config
+     */
+    overrides?: Partial<CollectionConfig>
 }
 ```
 
@@ -665,14 +667,14 @@ import { useField } from '@payloadcms/ui'
 import type { TextFieldClientComponent } from 'payload'
 
 export const CustomFieldComponent: TextFieldClientComponent = ({ field, path }) => {
-  const { value, setValue } = useField<string>({ path })
+    const { value, setValue } = useField<string>({ path })
 
-  return (
-    <div>
-      <label>{field.label}</label>
-      <input value={value || ''} onChange={(e) => setValue(e.target.value)} />
-    </div>
-  )
+    return (
+        <div>
+            <label>{field.label}</label>
+            <input value={value || ''} onChange={(e) => setValue(e.target.value)} />
+        </div>
+    )
 }
 ```
 
@@ -681,14 +683,14 @@ export const CustomFieldComponent: TextFieldClientComponent = ({ field, path }) 
 import type { Field } from 'payload'
 
 export const CustomField = (overrides?: Partial<Field>): Field => ({
-  name: 'customField',
-  type: 'text',
-  admin: {
-    components: {
-      Field: '/fields/CustomField/Component#CustomFieldComponent',
+    name: 'customField',
+    type: 'text',
+    admin: {
+        components: {
+            Field: '/fields/CustomField/Component#CustomFieldComponent',
+        },
     },
-  },
-  ...overrides,
+    ...overrides,
 })
 ```
 
@@ -712,9 +714,9 @@ Allow users to override plugin defaults:
 
 ```ts
 const collection: CollectionConfig = {
-  slug: 'redirects',
-  fields: defaultFields,
-  ...options.overrides, // User overrides last
+    slug: 'redirects',
+    fields: defaultFields,
+    ...options.overrides, // User overrides last
 }
 ```
 
@@ -724,11 +726,11 @@ Check if collections/globals are enabled:
 
 ```ts
 collections: config.collections?.map((collection) => {
-  const isEnabled = options.collections?.includes(collection.slug)
-  if (isEnabled) {
-    // Transform collection
-  }
-  return collection
+    const isEnabled = options.collections?.includes(collection.slug)
+    if (isEnabled) {
+        // Transform collection
+    }
+    return collection
 })
 ```
 
@@ -782,18 +784,18 @@ Allow plugin function to be async for awaiting collection overrides or async ope
 
 ```ts
 export const myPlugin =
-  (pluginConfig?: PluginConfig) =>
-  async (incomingConfig: Config): Promise<Config> => {
-    // Can await async operations during initialization
-    const customCollection = await pluginConfig.collectionOverride?.({
-      defaultCollection,
-    })
+    (pluginConfig?: PluginConfig) =>
+    async (incomingConfig: Config): Promise<Config> => {
+        // Can await async operations during initialization
+        const customCollection = await pluginConfig.collectionOverride?.({
+            defaultCollection,
+        })
 
-    return {
-      ...incomingConfig,
-      collections: [...incomingConfig.collections, customCollection],
+        return {
+            ...incomingConfig,
+            collections: [...incomingConfig.collections, customCollection],
+        }
     }
-  }
 ```
 
 #### Collection Override with Async Support
@@ -802,20 +804,20 @@ Allow users to override entire collections with async functions:
 
 ```ts
 type CollectionOverride = (args: {
-  defaultCollection: CollectionConfig
+    defaultCollection: CollectionConfig
 }) => CollectionConfig | Promise<CollectionConfig>
 
 interface PluginConfig {
-  products?: {
-    collectionOverride?: CollectionOverride
-  }
+    products?: {
+        collectionOverride?: CollectionOverride
+    }
 }
 
 // In plugin
 const defaultCollection = createProductsCollection(config)
 const finalCollection = config.products?.collectionOverride
-  ? await config.products.collectionOverride({ defaultCollection })
-  : defaultCollection
+    ? await config.products.collectionOverride({ defaultCollection })
+    : defaultCollection
 ```
 
 #### Config Sanitization Pattern
@@ -824,30 +826,30 @@ Normalize plugin configuration with defaults:
 
 ```ts
 export const sanitizePluginConfig = ({ pluginConfig }: Props): SanitizedPluginConfig => {
-  const config = { ...pluginConfig } as Partial<SanitizedPluginConfig>
+    const config = { ...pluginConfig } as Partial<SanitizedPluginConfig>
 
-  // Normalize boolean|object configs
-  if (typeof config.addresses === 'undefined' || config.addresses === true) {
-    config.addresses = { addressFields: defaultAddressFields() }
-  } else if (config.addresses === false) {
-    config.addresses = null
-  }
+    // Normalize boolean|object configs
+    if (typeof config.addresses === 'undefined' || config.addresses === true) {
+        config.addresses = { addressFields: defaultAddressFields() }
+    } else if (config.addresses === false) {
+        config.addresses = null
+    }
 
-  // Validate required fields
-  if (!config.stripeSecretKey) {
-    throw new Error('Stripe secret key is required')
-  }
+    // Validate required fields
+    if (!config.stripeSecretKey) {
+        throw new Error('Stripe secret key is required')
+    }
 
-  return config as SanitizedPluginConfig
+    return config as SanitizedPluginConfig
 }
 
 // Use at plugin start
 export const myPlugin =
-  (pluginConfig: PluginConfig): Plugin =>
-  (config) => {
-    const sanitized = sanitizePluginConfig({ pluginConfig })
-    // Use sanitized config throughout
-  }
+    (pluginConfig: PluginConfig): Plugin =>
+    (config) => {
+        const sanitized = sanitizePluginConfig({ pluginConfig })
+        // Use sanitized config throughout
+    }
 ```
 
 #### Collection Slug Mapping
@@ -884,26 +886,26 @@ Plugin operates on multiple collections with collection-specific config:
 
 ```ts
 interface PluginConfig {
-  sync: Array<{
-    collection: string
-    fields?: string[]
-    onSync?: (doc: any) => Promise<void>
-  }>
+    sync: Array<{
+        collection: string
+        fields?: string[]
+        onSync?: (doc: any) => Promise<void>
+    }>
 }
 
 // In plugin
 for (const collection of config.collections!) {
-  const syncConfig = pluginConfig.sync?.find((s) => s.collection === collection.slug)
-  if (!syncConfig) continue
+    const syncConfig = pluginConfig.sync?.find((s) => s.collection === collection.slug)
+    if (!syncConfig) continue
 
-  collection.hooks.afterChange = [
-    ...(collection.hooks?.afterChange || []),
-    async ({ doc, operation }) => {
-      if (operation === 'create' || operation === 'update') {
-        await syncConfig.onSync?.(doc)
-      }
-    },
-  ]
+    collection.hooks.afterChange = [
+        ...(collection.hooks?.afterChange || []),
+        async ({ doc, operation }) => {
+            if (operation === 'create' || operation === 'update') {
+                await syncConfig.onSync?.(doc)
+            }
+        },
+    ]
 }
 ```
 
@@ -918,22 +920,22 @@ incomingConfig.typescript = incomingConfig.typescript || {}
 incomingConfig.typescript.schema = incomingConfig.typescript.schema || []
 
 incomingConfig.typescript.schema.push((args) => {
-  const { jsonSchema } = args
+    const { jsonSchema } = args
 
-  jsonSchema.properties.ecommerce = {
-    type: 'object',
-    properties: {
-      collections: {
+    jsonSchema.properties.ecommerce = {
         type: 'object',
         properties: {
-          products: { type: 'string' },
-          orders: { type: 'string' },
+            collections: {
+                type: 'object',
+                properties: {
+                    products: { type: 'string' },
+                    orders: { type: 'string' },
+                },
+            },
         },
-      },
-    },
-  }
+    }
 
-  return jsonSchema
+    return jsonSchema
 })
 ```
 
@@ -974,26 +976,26 @@ Add global error handling:
 
 ```ts
 return {
-  ...config,
-  hooks: {
-    afterError: [
-      ...(config.hooks?.afterError ?? []),
-      async (args) => {
-        const { error } = args
-        const status = (error as APIError).status ?? 500
+    ...config,
+    hooks: {
+        afterError: [
+            ...(config.hooks?.afterError ?? []),
+            async (args) => {
+                const { error } = args
+                const status = (error as APIError).status ?? 500
 
-        if (status >= 500 || captureErrors.includes(status)) {
-          captureException(error, {
-            tags: {
-              collection: args.collection?.slug,
-              operation: args.operation,
+                if (status >= 500 || captureErrors.includes(status)) {
+                    captureException(error, {
+                        tags: {
+                            collection: args.collection?.slug,
+                            operation: args.operation,
+                        },
+                        user: args.req?.user ? { id: args.req.user.id } : undefined,
+                    })
+                }
             },
-            user: args.req?.user ? { id: args.req.user.id } : undefined,
-          })
-        }
-      },
-    ],
-  },
+        ],
+    },
 }
 ```
 
@@ -1003,42 +1005,42 @@ Coordinate multiple lifecycle hooks together for complex workflows (e.g., valida
 
 ```ts
 collection.hooks = {
-  ...collection.hooks,
+    ...collection.hooks,
 
-  beforeValidate: [
-    ...(collection.hooks?.beforeValidate || []),
-    async ({ data }) => {
-      // Normalize before validation
-      return data
-    },
-  ],
+    beforeValidate: [
+        ...(collection.hooks?.beforeValidate || []),
+        async ({ data }) => {
+            // Normalize before validation
+            return data
+        },
+    ],
 
-  beforeChange: [
-    ...(collection.hooks?.beforeChange || []),
-    async ({ data, operation }) => {
-      // Sync to external service
-      if (operation === 'create') {
-        data.externalId = await externalService.create(data)
-      }
-      return data
-    },
-  ],
+    beforeChange: [
+        ...(collection.hooks?.beforeChange || []),
+        async ({ data, operation }) => {
+            // Sync to external service
+            if (operation === 'create') {
+                data.externalId = await externalService.create(data)
+            }
+            return data
+        },
+    ],
 
-  afterChange: [
-    ...(collection.hooks?.afterChange || []),
-    async ({ doc }) => {
-      // Invalidate cache
-      await cache.invalidate(`doc:${doc.id}`)
-    },
-  ],
+    afterChange: [
+        ...(collection.hooks?.afterChange || []),
+        async ({ doc }) => {
+            // Invalidate cache
+            await cache.invalidate(`doc:${doc.id}`)
+        },
+    ],
 
-  afterDelete: [
-    ...(collection.hooks?.afterDelete || []),
-    async ({ doc }) => {
-      // Cleanup external resources
-      await externalService.delete(doc.externalId)
-    },
-  ],
+    afterDelete: [
+        ...(collection.hooks?.afterDelete || []),
+        async ({ doc }) => {
+            // Cleanup external resources
+            await externalService.delete(doc.externalId)
+        },
+    ],
 }
 ```
 
@@ -1051,31 +1053,31 @@ Wrap existing access control with plugin-specific logic:
 ```ts
 // From plugin-multi-tenant
 export const multiTenantPlugin =
-  (pluginOptions: PluginOptions) =>
-  (config: Config): Config => ({
-    ...config,
-    collections: (config.collections || []).map((collection) => {
-      if (!pluginOptions.collections.includes(collection.slug)) {
-        return collection
-      }
-
-      return {
-        ...collection,
-        access: {
-          ...collection.access,
-          read: ({ req }) => {
-            // Inject tenant filter
-            return {
-              and: [
-                collection.access?.read ? collection.access.read({ req }) : {},
-                { tenant: { equals: req.user?.tenant } },
-              ],
+    (pluginOptions: PluginOptions) =>
+    (config: Config): Config => ({
+        ...config,
+        collections: (config.collections || []).map((collection) => {
+            if (!pluginOptions.collections.includes(collection.slug)) {
+                return collection
             }
-          },
-        },
-      }
-    }),
-  })
+
+            return {
+                ...collection,
+                access: {
+                    ...collection.access,
+                    read: ({ req }) => {
+                        // Inject tenant filter
+                        return {
+                            and: [
+                                collection.access?.read ? collection.access.read({ req }) : {},
+                                { tenant: { equals: req.user?.tenant } },
+                            ],
+                        }
+                    },
+                },
+            }
+        }),
+    })
 ```
 
 #### BaseFilter Composition
@@ -1088,8 +1090,8 @@ const existingBaseFilter = collection.admin?.baseListFilter
 const tenantFilter = { tenant: { equals: req.user?.tenant } }
 
 collection.admin = {
-  ...collection.admin,
-  baseListFilter: existingBaseFilter ? { and: [existingBaseFilter, tenantFilter] } : tenantFilter,
+    ...collection.admin,
+    baseListFilter: existingBaseFilter ? { and: [existingBaseFilter, tenantFilter] } : tenantFilter,
 }
 ```
 
@@ -1100,17 +1102,20 @@ Add filters to relationship field options:
 ```ts
 // From plugin-multi-tenant
 collection.fields = collection.fields.map((field) => {
-  if (field.type === 'relationship') {
-    return {
-      ...field,
-      filterOptions: ({ relationTo }) => {
+    if (field.type === 'relationship') {
         return {
-          and: [field.filterOptions?.(relationTo) || {}, { tenant: { equals: req.user?.tenant } }],
+            ...field,
+            filterOptions: ({ relationTo }) => {
+                return {
+                    and: [
+                        field.filterOptions?.(relationTo) || {},
+                        { tenant: { equals: req.user?.tenant } },
+                    ],
+                }
+            },
         }
-      },
     }
-  }
-  return field
+    return field
 })
 ```
 
@@ -1123,23 +1128,23 @@ Use admin.meta for plugin-specific UI state without database fields:
 ```ts
 // From plugin-nested-docs
 export const nestedDocsPlugin =
-  (pluginOptions: PluginOptions) =>
-  (config: Config): Config => ({
-    ...config,
-    collections: config.collections?.map((collection) => ({
-      ...collection,
-      admin: {
-        ...collection.admin,
-        meta: {
-          ...collection.admin?.meta,
-          nestedDocs: {
-            breadcrumbsFieldSlug: pluginOptions.breadcrumbsFieldSlug || 'breadcrumbs',
-            parentFieldSlug: pluginOptions.parentFieldSlug || 'parent',
-          },
-        },
-      },
-    })),
-  })
+    (pluginOptions: PluginOptions) =>
+    (config: Config): Config => ({
+        ...config,
+        collections: config.collections?.map((collection) => ({
+            ...collection,
+            admin: {
+                ...collection.admin,
+                meta: {
+                    ...collection.admin?.meta,
+                    nestedDocs: {
+                        breadcrumbsFieldSlug: pluginOptions.breadcrumbsFieldSlug || 'breadcrumbs',
+                        parentFieldSlug: pluginOptions.parentFieldSlug || 'parent',
+                    },
+                },
+            },
+        })),
+    })
 ```
 
 #### Conditional Component Rendering
@@ -1151,15 +1156,15 @@ Add components based on plugin configuration:
 const beforeFields = collection.admin?.components?.beforeFields || []
 
 if (pluginOptions.uploadsCollection === collection.slug) {
-  beforeFields.push('/path/to/ImagePreview#ImagePreview')
+    beforeFields.push('/path/to/ImagePreview#ImagePreview')
 }
 
 collection.admin = {
-  ...collection.admin,
-  components: {
-    ...collection.admin?.components,
-    beforeFields,
-  },
+    ...collection.admin,
+    components: {
+        ...collection.admin?.components,
+        beforeFields,
+    },
 }
 ```
 
@@ -1170,14 +1175,14 @@ Inject context providers for shared state:
 ```ts
 // From plugin-nested-docs
 collection.admin = {
-  ...collection.admin,
-  components: {
-    ...collection.admin?.components,
-    providers: [
-      ...(collection.admin?.components?.providers || []),
-      '/components/NestedDocsProvider#NestedDocsProvider',
-    ],
-  },
+    ...collection.admin,
+    components: {
+        ...collection.admin?.components,
+        providers: [
+            ...(collection.admin?.components?.providers || []),
+            '/components/NestedDocsProvider#NestedDocsProvider',
+        ],
+    },
 }
 ```
 
@@ -1188,15 +1193,15 @@ Add collection-level action buttons:
 ```ts
 // From plugin-import-export
 collection.admin = {
-  ...collection.admin,
-  components: {
-    ...collection.admin?.components,
-    actions: [
-      ...(collection.admin?.components?.actions || []),
-      '/components/ImportButton#ImportButton',
-      '/components/ExportButton#ExportButton',
-    ],
-  },
+    ...collection.admin,
+    components: {
+        ...collection.admin?.components,
+        actions: [
+            ...(collection.admin?.components?.actions || []),
+            '/components/ImportButton#ImportButton',
+            '/components/ExportButton#ExportButton',
+        ],
+    },
 }
 ```
 
@@ -1207,17 +1212,17 @@ Modify how items appear in collection lists:
 ```ts
 // From plugin-ecommerce
 collection.admin = {
-  ...collection.admin,
-  components: {
-    ...collection.admin?.components,
-    views: {
-      ...collection.admin?.components?.views,
-      list: {
-        ...collection.admin?.components?.views?.list,
-        Component: '/views/ProductList#ProductList',
-      },
+    ...collection.admin,
+    components: {
+        ...collection.admin?.components,
+        views: {
+            ...collection.admin?.components?.views,
+            list: {
+                ...collection.admin?.components?.views?.list,
+                Component: '/views/ProductList#ProductList',
+            },
+        },
     },
-  },
 }
 ```
 
@@ -1228,23 +1233,23 @@ Add collection-scoped endpoints (accessible at `/api/<collection-slug>/<path>`):
 ```ts
 // From plugin-import-export
 collection.endpoints = [
-  ...(collection.endpoints || []),
-  {
-    path: '/import',
-    method: 'post',
-    handler: async (req) => {
-      // Import logic accessible at /api/posts/import
-      return Response.json({ success: true })
+    ...(collection.endpoints || []),
+    {
+        path: '/import',
+        method: 'post',
+        handler: async (req) => {
+            // Import logic accessible at /api/posts/import
+            return Response.json({ success: true })
+        },
     },
-  },
-  {
-    path: '/export',
-    method: 'get',
-    handler: async (req) => {
-      // Export logic accessible at /api/posts/export
-      return Response.json({ data: exportedData })
+    {
+        path: '/export',
+        method: 'get',
+        handler: async (req) => {
+            // Export logic accessible at /api/posts/export
+            return Response.json({ data: exportedData })
+        },
     },
-  },
 ]
 ```
 
@@ -1257,10 +1262,10 @@ Control admin UI organization:
 ```ts
 // From plugin-redirects
 collection.admin = {
-  ...collection.admin,
-  group: pluginOptions.group || 'Settings',
-  hidden: pluginOptions.hidden,
-  defaultColumns: pluginOptions.defaultColumns || ['from', 'to', 'updatedAt'],
+    ...collection.admin,
+    group: pluginOptions.group || 'Settings',
+    hidden: pluginOptions.hidden,
+    defaultColumns: pluginOptions.defaultColumns || ['from', 'to', 'updatedAt'],
 }
 ```
 
@@ -1273,24 +1278,24 @@ Register plugin background tasks:
 ```ts
 // From plugin-stripe
 export const stripePlugin =
-  (pluginOptions: PluginOptions) =>
-  (config: Config): Config => ({
-    ...config,
-    jobs: {
-      ...config.jobs,
-      tasks: [
-        ...(config.jobs?.tasks || []),
-        {
-          slug: 'syncStripeProducts',
-          handler: async ({ req }) => {
-            const products = await stripe.products.list()
-            // Sync to Payload
-            return { output: { synced: products.data.length } }
-          },
+    (pluginOptions: PluginOptions) =>
+    (config: Config): Config => ({
+        ...config,
+        jobs: {
+            ...config.jobs,
+            tasks: [
+                ...(config.jobs?.tasks || []),
+                {
+                    slug: 'syncStripeProducts',
+                    handler: async ({ req }) => {
+                        const products = await stripe.products.list()
+                        // Sync to Payload
+                        return { output: { synced: products.data.length } }
+                    },
+                },
+            ],
         },
-      ],
-    },
-  })
+    })
 ```
 
 ## Testing Plugins
@@ -1314,19 +1319,19 @@ import { mongooseAdapter } from '@payloadcms/db-mongodb'
 import { myPlugin } from '../src/index.js'
 
 export default buildConfig({
-  secret: process.env.PAYLOAD_SECRET!,
-  db: mongooseAdapter({ url: process.env.DATABASE_URL! }),
-  plugins: [
-    myPlugin({
-      collections: ['posts'],
-    }),
-  ],
-  collections: [
-    {
-      slug: 'posts',
-      fields: [{ name: 'title', type: 'text' }],
-    },
-  ],
+    secret: process.env.PAYLOAD_SECRET!,
+    db: mongooseAdapter({ url: process.env.DATABASE_URL! }),
+    plugins: [
+        myPlugin({
+            collections: ['posts'],
+        }),
+    ],
+    collections: [
+        {
+            slug: 'posts',
+            fields: [{ name: 'title', type: 'text' }],
+        },
+    ],
 })
 ```
 
@@ -1350,38 +1355,38 @@ import { customEndpointHandler } from '../src/endpoints/handler.js'
 let payload: Payload
 
 beforeAll(async () => {
-  payload = await getPayload({ config })
+    payload = await getPayload({ config })
 })
 
 afterAll(async () => {
-  await payload.destroy()
+    await payload.destroy()
 })
 
 describe('Plugin integration tests', () => {
-  test('should add field to collection', async () => {
-    const post = await payload.create({
-      collection: 'posts',
-      data: {
-        title: 'Test',
-        addedByPlugin: 'plugin value',
-      },
+    test('should add field to collection', async () => {
+        const post = await payload.create({
+            collection: 'posts',
+            data: {
+                title: 'Test',
+                addedByPlugin: 'plugin value',
+            },
+        })
+        expect(post.addedByPlugin).toBe('plugin value')
     })
-    expect(post.addedByPlugin).toBe('plugin value')
-  })
 
-  test('should create plugin collection', async () => {
-    expect(payload.collections['plugin-collection']).toBeDefined()
-    const { docs } = await payload.find({ collection: 'plugin-collection' })
-    expect(docs.length).toBeGreaterThan(0)
-  })
+    test('should create plugin collection', async () => {
+        expect(payload.collections['plugin-collection']).toBeDefined()
+        const { docs } = await payload.find({ collection: 'plugin-collection' })
+        expect(docs.length).toBeGreaterThan(0)
+    })
 
-  test('should query custom endpoint', async () => {
-    const request = new Request('http://localhost:3000/api/my-endpoint')
-    const payloadRequest = await createPayloadRequest({ config, request })
-    const response = await customEndpointHandler(payloadRequest)
-    const data = await response.json()
-    expect(data).toMatchObject({ message: 'Hello' })
-  })
+    test('should query custom endpoint', async () => {
+        const request = new Request('http://localhost:3000/api/my-endpoint')
+        const payloadRequest = await createPayloadRequest({ config, request })
+        const response = await customEndpointHandler(payloadRequest)
+        const data = await response.json()
+        expect(data).toMatchObject({ message: 'Hello' })
+    })
 })
 ```
 
@@ -1395,10 +1400,10 @@ Create `dev/e2e.spec.ts`:
 import { test, expect } from '@playwright/test'
 
 test.describe('Plugin e2e tests', () => {
-  test('should render custom admin component', async ({ page }) => {
-    await page.goto('http://localhost:3000/admin')
-    await expect(page.getByText('Added by the plugin')).toBeVisible()
-  })
+    test('should render custom admin component', async ({ page }) => {
+        await page.goto('http://localhost:3000/admin')
+        await expect(page.getByText('Added by the plugin')).toBeVisible()
+    })
 })
 ```
 

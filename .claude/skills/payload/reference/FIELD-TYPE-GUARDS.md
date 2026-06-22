@@ -13,12 +13,12 @@ import type { Field } from 'payload'
 import { fieldHasSubFields } from 'payload'
 
 function traverseFields(fields: Field[]): void {
-  fields.forEach((field) => {
-    if (fieldHasSubFields(field)) {
-      // Safe to access field.fields
-      traverseFields(field.fields)
-    }
-  })
+    fields.forEach((field) => {
+        if (fieldHasSubFields(field)) {
+            // Safe to access field.fields
+            traverseFields(field.fields)
+        }
+    })
 }
 ```
 
@@ -34,7 +34,7 @@ fieldHasSubFields<TField extends ClientField | Field>(
 
 ```ts
 if (fieldHasSubFields(field) && !fieldIsArrayType(field)) {
-  // Groups, rows, collapsibles only (not arrays)
+    // Groups, rows, collapsibles only (not arrays)
 }
 ```
 
@@ -46,9 +46,9 @@ Checks if field type is `'array'`.
 import { fieldIsArrayType } from 'payload'
 
 if (fieldIsArrayType(field)) {
-  // field.type === 'array'
-  console.log(`Min rows: ${field.minRows}`)
-  console.log(`Max rows: ${field.maxRows}`)
+    // field.type === 'array'
+    console.log(`Min rows: ${field.minRows}`)
+    console.log(`Max rows: ${field.maxRows}`)
 }
 ```
 
@@ -68,10 +68,10 @@ Checks if field type is `'blocks'`.
 import { fieldIsBlockType } from 'payload'
 
 if (fieldIsBlockType(field)) {
-  // field.type === 'blocks'
-  field.blocks.forEach((block) => {
-    console.log(`Block: ${block.slug}`)
-  })
+    // field.type === 'blocks'
+    field.blocks.forEach((block) => {
+        console.log(`Block: ${block.slug}`)
+    })
 }
 ```
 
@@ -87,9 +87,9 @@ fieldIsBlockType<TField extends ClientField | Field>(
 
 ```ts
 if (fieldIsArrayType(field)) {
-  // Handle array rows
+    // Handle array rows
 } else if (fieldIsBlockType(field)) {
-  // Handle block types
+    // Handle block types
 }
 ```
 
@@ -101,8 +101,8 @@ Checks if field type is `'group'`.
 import { fieldIsGroupType } from 'payload'
 
 if (fieldIsGroupType(field)) {
-  // field.type === 'group'
-  console.log(`Interface: ${field.interfaceName}`)
+    // field.type === 'group'
+    console.log(`Interface: ${field.interfaceName}`)
 }
 ```
 
@@ -124,11 +124,11 @@ Checks if field can have multiple values (select, relationship, or upload with `
 import { fieldSupportsMany } from 'payload'
 
 if (fieldSupportsMany(field)) {
-  // field.type is 'select' | 'relationship' | 'upload'
-  // Safe to check field.hasMany
-  if (field.hasMany) {
-    console.log('Field accepts multiple values')
-  }
+    // field.type is 'select' | 'relationship' | 'upload'
+    // Safe to check field.hasMany
+    if (field.hasMany) {
+        console.log('Field accepts multiple values')
+    }
 }
 ```
 
@@ -148,9 +148,9 @@ Checks if field is relationship/upload/join with numeric `maxDepth` property.
 import { fieldHasMaxDepth } from 'payload'
 
 if (fieldHasMaxDepth(field)) {
-  // field.type is 'upload' | 'relationship' | 'join'
-  // AND field.maxDepth is number
-  const remainingDepth = field.maxDepth - currentDepth
+    // field.type is 'upload' | 'relationship' | 'join'
+    // AND field.maxDepth is number
+    const remainingDepth = field.maxDepth - currentDepth
 }
 ```
 
@@ -170,9 +170,9 @@ Checks if field needs localization handling (accounts for parent localization).
 import { fieldShouldBeLocalized } from 'payload'
 
 function processField(field: Field, parentIsLocalized: boolean) {
-  if (fieldShouldBeLocalized({ field, parentIsLocalized })) {
-    // Create locale-specific table or index
-  }
+    if (fieldShouldBeLocalized({ field, parentIsLocalized })) {
+        // Create locale-specific table or index
+    }
 }
 ```
 
@@ -191,7 +191,7 @@ fieldShouldBeLocalized({
 ```ts
 // Accounts for parent localization
 if (fieldShouldBeLocalized({ field, parentIsLocalized: false })) {
-  /* ... */
+    /* ... */
 }
 ```
 
@@ -203,13 +203,13 @@ Checks if field is virtual (computed or virtual relationship).
 import { fieldIsVirtual } from 'payload'
 
 if (fieldIsVirtual(field)) {
-  // field.virtual is truthy
-  if (typeof field.virtual === 'string') {
-    // Virtual relationship path
-    console.log(`Virtual path: ${field.virtual}`)
-  } else {
-    // Computed virtual field (uses hooks)
-  }
+    // field.virtual is truthy
+    if (typeof field.virtual === 'string') {
+        // Virtual relationship path
+        console.log(`Virtual path: ${field.virtual}`)
+    } else {
+        // Computed virtual field (uses hooks)
+    }
 }
 ```
 
@@ -229,12 +229,12 @@ fieldIsVirtual(field: Field | Tab): boolean
 import { fieldAffectsData } from 'payload'
 
 function generateSchema(fields: Field[]) {
-  fields.forEach((field) => {
-    if (fieldAffectsData(field)) {
-      // Safe to access field.name
-      schema[field.name] = getFieldType(field)
-    }
-  })
+    fields.forEach((field) => {
+        if (fieldAffectsData(field)) {
+            // Safe to access field.name
+            schema[field.name] = getFieldType(field)
+        }
+    })
 }
 ```
 
@@ -260,9 +260,9 @@ Checks if field is UI-only (type `'ui'`).
 import { fieldIsPresentationalOnly } from 'payload'
 
 if (fieldIsPresentationalOnly(field)) {
-  // field.type === 'ui'
-  // Skip in data operations, GraphQL schema, etc.
-  return
+    // field.type === 'ui'
+    // Skip in data operations, GraphQL schema, etc.
+    return
 }
 ```
 
@@ -282,8 +282,8 @@ Checks if field name is exactly `'id'`.
 import { fieldIsID } from 'payload'
 
 if (fieldIsID(field)) {
-  // field.name === 'id'
-  // Special handling for ID field
+    // field.name === 'id'
+    // Special handling for ID field
 }
 ```
 
@@ -323,13 +323,13 @@ Checks if field is positioned in sidebar.
 import { fieldIsSidebar } from 'payload'
 
 const [mainFields, sidebarFields] = fields.reduce(
-  ([main, sidebar], field) => {
-    if (fieldIsSidebar(field)) {
-      return [main, [...sidebar, field]]
-    }
-    return [[...main, field], sidebar]
-  },
-  [[], []],
+    ([main, sidebar], field) => {
+        if (fieldIsSidebar(field)) {
+            return [main, [...sidebar, field]]
+        }
+        return [[...main, field], sidebar]
+    },
+    [[], []],
 )
 ```
 
@@ -351,11 +351,11 @@ Checks if tab is named (stores data under tab name).
 import { tabHasName } from 'payload'
 
 tabs.forEach((tab) => {
-  if (tabHasName(tab)) {
-    // tab.name exists
-    dataPath.push(tab.name)
-  }
-  // Process tab.fields
+    if (tabHasName(tab)) {
+        // tab.name exists
+        dataPath.push(tab.name)
+    }
+    // Process tab.fields
 })
 ```
 
@@ -375,8 +375,8 @@ Checks if group is named (stores data under group name).
 import { groupHasName } from 'payload'
 
 if (groupHasName(group)) {
-  // group.name exists
-  return data[group.name]
+    // group.name exists
+    return data[group.name]
 }
 ```
 
@@ -396,11 +396,11 @@ Checks if option is object format `{label, value}` vs string.
 import { optionIsObject } from 'payload'
 
 field.options.forEach((option) => {
-  if (optionIsObject(option)) {
-    console.log(`${option.label}: ${option.value}`)
-  } else {
-    console.log(option) // string value
-  }
+    if (optionIsObject(option)) {
+        console.log(`${option.label}: ${option.value}`)
+    } else {
+        console.log(option) // string value
+    }
 })
 ```
 
@@ -418,8 +418,8 @@ Checks if entire options array contains objects.
 import { optionsAreObjects } from 'payload'
 
 if (optionsAreObjects(field.options)) {
-  // All options are OptionObject[]
-  const labels = field.options.map((opt) => opt.label)
+    // All options are OptionObject[]
+    const labels = field.options.map((opt) => opt.label)
 }
 ```
 
@@ -437,8 +437,8 @@ Checks if option is string value (not object).
 import { optionIsValue } from 'payload'
 
 if (optionIsValue(option)) {
-  // option is string
-  const value = option
+    // option is string
+    const value = option
 }
 ```
 
@@ -456,9 +456,9 @@ Checks if relationship value is polymorphic format `{relationTo, value}`.
 import { valueIsValueWithRelation } from 'payload'
 
 if (valueIsValueWithRelation(fieldValue)) {
-  // fieldValue.relationTo exists
-  // fieldValue.value exists
-  console.log(`Related to ${fieldValue.relationTo}: ${fieldValue.value}`)
+    // fieldValue.relationTo exists
+    // fieldValue.value exists
+    console.log(`Related to ${fieldValue.relationTo}: ${fieldValue.value}`)
 }
 ```
 
@@ -476,15 +476,15 @@ valueIsValueWithRelation(value: unknown): value is ValueWithRelation
 import { fieldAffectsData, fieldHasSubFields } from 'payload'
 
 function traverseFields(fields: Field[], callback: (field: Field) => void) {
-  fields.forEach((field) => {
-    if (fieldAffectsData(field)) {
-      callback(field)
-    }
+    fields.forEach((field) => {
+        if (fieldAffectsData(field)) {
+            callback(field)
+        }
 
-    if (fieldHasSubFields(field)) {
-      traverseFields(field.fields, callback)
-    }
-  })
+        if (fieldHasSubFields(field)) {
+            traverseFields(field.fields, callback)
+        }
+    })
 }
 ```
 
@@ -494,8 +494,10 @@ function traverseFields(fields: Field[], callback: (field: Field) => void) {
 import { fieldAffectsData, fieldIsPresentationalOnly, fieldIsHiddenOrDisabled } from 'payload'
 
 const dataFields = fields.filter(
-  (field) =>
-    fieldAffectsData(field) && !fieldIsPresentationalOnly(field) && !fieldIsHiddenOrDisabled(field),
+    (field) =>
+        fieldAffectsData(field) &&
+        !fieldIsPresentationalOnly(field) &&
+        !fieldIsHiddenOrDisabled(field),
 )
 ```
 
@@ -505,11 +507,11 @@ const dataFields = fields.filter(
 import { fieldIsArrayType, fieldIsBlockType, fieldHasSubFields } from 'payload'
 
 if (fieldIsArrayType(field)) {
-  // Handle array-specific logic
+    // Handle array-specific logic
 } else if (fieldIsBlockType(field)) {
-  // Handle blocks-specific logic
+    // Handle blocks-specific logic
 } else if (fieldHasSubFields(field)) {
-  // Handle group/row/collapsible
+    // Handle group/row/collapsible
 }
 ```
 
@@ -523,11 +525,11 @@ import { fieldSupportsMany, fieldHasMaxDepth } from 'payload'
 
 // With guard - safe access
 if (fieldSupportsMany(field) && field.hasMany) {
-  console.log('Multiple values supported')
+    console.log('Multiple values supported')
 }
 
 if (fieldHasMaxDepth(field)) {
-  const depth = field.maxDepth // TypeScript knows this is number
+    const depth = field.maxDepth // TypeScript knows this is number
 }
 ```
 
@@ -540,14 +542,14 @@ import type { ClientField, Field } from 'payload'
 import { fieldHasSubFields } from 'payload'
 
 function processServerField(field: Field) {
-  if (fieldHasSubFields(field)) {
-    // field is Field & FieldWithSubFields (not ClientField)
-  }
+    if (fieldHasSubFields(field)) {
+        // field is Field & FieldWithSubFields (not ClientField)
+    }
 }
 
 function processClientField(field: ClientField) {
-  if (fieldHasSubFields(field)) {
-    // field is ClientField & FieldWithSubFieldsClient
-  }
+    if (fieldHasSubFields(field)) {
+        // field is ClientField & FieldWithSubFieldsClient
+    }
 }
 ```

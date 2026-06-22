@@ -41,16 +41,16 @@ Custom endpoints are **not authenticated by default**. Check `req.user` to enfor
 import { APIError } from 'payload'
 
 export const authenticatedEndpoint = {
-  path: '/protected',
-  method: 'get',
-  handler: async (req) => {
-    if (!req.user) {
-      throw new APIError('Unauthorized', 401)
-    }
+    path: '/protected',
+    method: 'get',
+    handler: async (req) => {
+        if (!req.user) {
+            throw new APIError('Unauthorized', 401)
+        }
 
-    // User is authenticated
-    return Response.json({ message: 'Access granted' })
-  },
+        // User is authenticated
+        return Response.json({ message: 'Access granted' })
+    },
 }
 ```
 
@@ -60,25 +60,25 @@ Use `req.payload` for database operations with access control and hooks.
 
 ```ts
 export const getRelatedPosts = {
-  path: '/:id/related',
-  method: 'get',
-  handler: async (req) => {
-    const { id } = req.routeParams
+    path: '/:id/related',
+    method: 'get',
+    handler: async (req) => {
+        const { id } = req.routeParams
 
-    // Find related posts
-    const posts = await req.payload.find({
-      collection: 'posts',
-      where: {
-        category: {
-          equals: id,
-        },
-      },
-      limit: 5,
-      sort: '-createdAt',
-    })
+        // Find related posts
+        const posts = await req.payload.find({
+            collection: 'posts',
+            where: {
+                category: {
+                    equals: id,
+                },
+            },
+            limit: 5,
+            sort: '-createdAt',
+        })
 
-    return Response.json(posts)
-  },
+        return Response.json(posts)
+    },
 }
 ```
 
@@ -88,19 +88,19 @@ Access path parameters via `req.routeParams`.
 
 ```ts
 export const getTrackingEndpoint = {
-  path: '/:id/tracking',
-  method: 'get',
-  handler: async (req) => {
-    const orderId = req.routeParams.id
+    path: '/:id/tracking',
+    method: 'get',
+    handler: async (req) => {
+        const orderId = req.routeParams.id
 
-    const tracking = await getTrackingInfo(orderId)
+        const tracking = await getTrackingInfo(orderId)
 
-    if (!tracking) {
-      return Response.json({ error: 'not found' }, { status: 404 })
-    }
+        if (!tracking) {
+            return Response.json({ error: 'not found' }, { status: 404 })
+        }
 
-    return Response.json(tracking)
-  },
+        return Response.json(tracking)
+    },
 }
 ```
 
@@ -110,18 +110,18 @@ export const getTrackingEndpoint = {
 
 ```ts
 export const createEndpoint = {
-  path: '/create',
-  method: 'post',
-  handler: async (req) => {
-    const data = await req.json()
+    path: '/create',
+    method: 'post',
+    handler: async (req) => {
+        const data = await req.json()
 
-    const result = await req.payload.create({
-      collection: 'posts',
-      data,
-    })
+        const result = await req.payload.create({
+            collection: 'posts',
+            data,
+        })
 
-    return Response.json(result)
-  },
+        return Response.json(result)
+    },
 }
 ```
 
@@ -131,22 +131,22 @@ export const createEndpoint = {
 import { addDataAndFileToRequest } from 'payload'
 
 export const uploadEndpoint = {
-  path: '/upload',
-  method: 'post',
-  handler: async (req) => {
-    await addDataAndFileToRequest(req)
+    path: '/upload',
+    method: 'post',
+    handler: async (req) => {
+        await addDataAndFileToRequest(req)
 
-    // req.data now contains parsed body
-    // req.file contains uploaded file (if multipart)
+        // req.data now contains parsed body
+        // req.file contains uploaded file (if multipart)
 
-    const result = await req.payload.create({
-      collection: 'media',
-      data: req.data,
-      file: req.file,
-    })
+        const result = await req.payload.create({
+            collection: 'media',
+            data: req.data,
+            file: req.file,
+        })
 
-    return Response.json(result)
-  },
+        return Response.json(result)
+    },
 }
 ```
 
@@ -158,18 +158,18 @@ Use `headersWithCors` helper to apply config CORS settings.
 import { headersWithCors } from 'payload'
 
 export const corsEndpoint = {
-  path: '/public-data',
-  method: 'get',
-  handler: async (req) => {
-    const data = await fetchPublicData()
+    path: '/public-data',
+    method: 'get',
+    handler: async (req) => {
+        const data = await fetchPublicData()
 
-    return Response.json(data, {
-      headers: headersWithCors({
-        headers: new Headers(),
-        req,
-      }),
-    })
-  },
+        return Response.json(data, {
+            headers: headersWithCors({
+                headers: new Headers(),
+                req,
+            }),
+        })
+    },
 }
 ```
 
@@ -181,18 +181,18 @@ Throw `APIError` with status codes for proper error responses.
 import { APIError } from 'payload'
 
 export const validateEndpoint = {
-  path: '/validate',
-  method: 'post',
-  handler: async (req) => {
-    const data = await req.json()
+    path: '/validate',
+    method: 'post',
+    handler: async (req) => {
+        const data = await req.json()
 
-    if (!data.email) {
-      throw new APIError('Email is required', 400)
-    }
+        if (!data.email) {
+            throw new APIError('Email is required', 400)
+        }
 
-    // Validation passed
-    return Response.json({ valid: true })
-  },
+        // Validation passed
+        return Response.json({ valid: true })
+    },
 }
 ```
 
@@ -202,25 +202,25 @@ Extract query params from URL.
 
 ```ts
 export const searchEndpoint = {
-  path: '/search',
-  method: 'get',
-  handler: async (req) => {
-    const url = new URL(req.url)
-    const query = url.searchParams.get('q')
-    const limit = parseInt(url.searchParams.get('limit') || '10')
+    path: '/search',
+    method: 'get',
+    handler: async (req) => {
+        const url = new URL(req.url)
+        const query = url.searchParams.get('q')
+        const limit = parseInt(url.searchParams.get('limit') || '10')
 
-    const results = await req.payload.find({
-      collection: 'posts',
-      where: {
-        title: {
-          contains: query,
-        },
-      },
-      limit,
-    })
+        const results = await req.payload.find({
+            collection: 'posts',
+            where: {
+                title: {
+                    contains: query,
+                },
+            },
+            limit,
+        })
 
-    return Response.json(results)
-  },
+        return Response.json(results)
+    },
 }
 ```
 
@@ -234,17 +234,17 @@ Parses request body and attaches to `req.data` and `req.file`.
 import { addDataAndFileToRequest } from 'payload'
 
 export const endpoint = {
-  path: '/process',
-  method: 'post',
-  handler: async (req) => {
-    await addDataAndFileToRequest(req)
+    path: '/process',
+    method: 'post',
+    handler: async (req) => {
+        await addDataAndFileToRequest(req)
 
-    // req.data: parsed JSON or form data
-    // req.file: uploaded file (if multipart)
+        // req.data: parsed JSON or form data
+        // req.file: uploaded file (if multipart)
 
-    console.log(req.data) // { title: 'My Post' }
-    console.log(req.file) // File object or undefined
-  },
+        console.log(req.data) // { title: 'My Post' }
+        console.log(req.file) // File object or undefined
+    },
 }
 ```
 
@@ -262,21 +262,21 @@ Extracts locale from request data and validates against config.
 import { addLocalesToRequestFromData } from 'payload'
 
 export const endpoint = {
-  path: '/translate',
-  method: 'post',
-  handler: async (req) => {
-    await addLocalesToRequestFromData(req)
+    path: '/translate',
+    method: 'post',
+    handler: async (req) => {
+        await addLocalesToRequestFromData(req)
 
-    // req.locale: validated locale string
-    // req.fallbackLocale: fallback locale string
+        // req.locale: validated locale string
+        // req.fallbackLocale: fallback locale string
 
-    const result = await req.payload.find({
-      collection: 'posts',
-      locale: req.locale,
-    })
+        const result = await req.payload.find({
+            collection: 'posts',
+            locale: req.locale,
+        })
 
-    return Response.json(result)
-  },
+        return Response.json(result)
+    },
 }
 ```
 
@@ -288,20 +288,20 @@ Applies CORS headers from Payload config.
 import { headersWithCors } from 'payload'
 
 export const endpoint = {
-  path: '/data',
-  method: 'get',
-  handler: async (req) => {
-    const data = { message: 'Hello' }
+    path: '/data',
+    method: 'get',
+    handler: async (req) => {
+        const data = { message: 'Hello' }
 
-    return Response.json(data, {
-      headers: headersWithCors({
-        headers: new Headers({
-          'Cache-Control': 'public, max-age=3600',
-        }),
-        req,
-      }),
-    })
-  },
+        return Response.json(data, {
+            headers: headersWithCors({
+                headers: new Headers({
+                    'Cache-Control': 'public, max-age=3600',
+                }),
+                req,
+            }),
+        })
+    },
 }
 ```
 
@@ -315,52 +315,56 @@ From `examples/multi-tenant`:
 import { APIError, generatePayloadCookie, headersWithCors } from 'payload'
 
 export const externalUsersLogin = {
-  path: '/login-external',
-  method: 'post',
-  handler: async (req) => {
-    const { email, password, tenant } = await req.json()
+    path: '/login-external',
+    method: 'post',
+    handler: async (req) => {
+        const { email, password, tenant } = await req.json()
 
-    if (!email || !password || !tenant) {
-      throw new APIError('Missing credentials', 400)
-    }
+        if (!email || !password || !tenant) {
+            throw new APIError('Missing credentials', 400)
+        }
 
-    // Find user with tenant constraint
-    const userQuery = await req.payload.find({
-      collection: 'users',
-      where: {
-        and: [
-          { email: { equals: email } },
-          {
-            or: [{ tenants: { equals: tenant } }, { 'tenants.tenant': { equals: tenant } }],
-          },
-        ],
-      },
-    })
+        // Find user with tenant constraint
+        const userQuery = await req.payload.find({
+            collection: 'users',
+            where: {
+                and: [
+                    { email: { equals: email } },
+                    {
+                        or: [
+                            { tenants: { equals: tenant } },
+                            { 'tenants.tenant': { equals: tenant } },
+                        ],
+                    },
+                ],
+            },
+        })
 
-    if (!userQuery.docs.length) {
-      throw new APIError('Invalid credentials', 401)
-    }
+        if (!userQuery.docs.length) {
+            throw new APIError('Invalid credentials', 401)
+        }
 
-    // Authenticate user
-    const result = await req.payload.login({
-      collection: 'users',
-      data: { email, password },
-    })
+        // Authenticate user
+        const result = await req.payload.login({
+            collection: 'users',
+            data: { email, password },
+        })
 
-    return Response.json(result, {
-      headers: headersWithCors({
-        headers: new Headers({
-          'Set-Cookie': generatePayloadCookie({
-            collectionAuthConfig: req.payload.config.collections.find((c) => c.slug === 'users')
-              .auth,
-            cookiePrefix: req.payload.config.cookiePrefix,
-            token: result.token,
-          }),
-        }),
-        req,
-      }),
-    })
-  },
+        return Response.json(result, {
+            headers: headersWithCors({
+                headers: new Headers({
+                    'Set-Cookie': generatePayloadCookie({
+                        collectionAuthConfig: req.payload.config.collections.find(
+                            (c) => c.slug === 'users',
+                        ).auth,
+                        cookiePrefix: req.payload.config.cookiePrefix,
+                        token: result.token,
+                    }),
+                }),
+                req,
+            }),
+        })
+    },
 }
 ```
 
@@ -370,31 +374,31 @@ From `packages/plugin-ecommerce`:
 
 ```ts
 export const webhookEndpoint = {
-  path: '/webhooks',
-  method: 'post',
-  handler: async (req) => {
-    const body = await req.text()
-    const signature = req.headers.get('stripe-signature')
+    path: '/webhooks',
+    method: 'post',
+    handler: async (req) => {
+        const body = await req.text()
+        const signature = req.headers.get('stripe-signature')
 
-    try {
-      const event = stripe.webhooks.constructEvent(body, signature, webhookSecret)
+        try {
+            const event = stripe.webhooks.constructEvent(body, signature, webhookSecret)
 
-      // Process event
-      switch (event.type) {
-        case 'payment_intent.succeeded':
-          await handlePaymentSuccess(req.payload, event.data.object)
-          break
-        case 'payment_intent.failed':
-          await handlePaymentFailure(req.payload, event.data.object)
-          break
-      }
+            // Process event
+            switch (event.type) {
+                case 'payment_intent.succeeded':
+                    await handlePaymentSuccess(req.payload, event.data.object)
+                    break
+                case 'payment_intent.failed':
+                    await handlePaymentFailure(req.payload, event.data.object)
+                    break
+            }
 
-      return Response.json({ received: true })
-    } catch (err) {
-      req.payload.logger.error(`Webhook error: ${err.message}`)
-      return Response.json({ error: err.message }, { status: 400 })
-    }
-  },
+            return Response.json({ received: true })
+        } catch (err) {
+            req.payload.logger.error(`Webhook error: ${err.message}`)
+            return Response.json({ error: err.message }, { status: 400 })
+        }
+    },
 }
 ```
 
@@ -406,37 +410,37 @@ From `packages/plugin-import-export`:
 import { addDataAndFileToRequest } from 'payload'
 
 export const previewEndpoint = {
-  path: '/preview',
-  method: 'post',
-  handler: async (req) => {
-    if (!req.user) {
-      throw new APIError('Unauthorized', 401)
-    }
+    path: '/preview',
+    method: 'post',
+    handler: async (req) => {
+        if (!req.user) {
+            throw new APIError('Unauthorized', 401)
+        }
 
-    await addDataAndFileToRequest(req)
+        await addDataAndFileToRequest(req)
 
-    const { collection, where, limit = 10 } = req.data
+        const { collection, where, limit = 10 } = req.data
 
-    // Validate collection exists
-    const collectionConfig = req.payload.config.collections.find((c) => c.slug === collection)
-    if (!collectionConfig) {
-      throw new APIError('Collection not found', 404)
-    }
+        // Validate collection exists
+        const collectionConfig = req.payload.config.collections.find((c) => c.slug === collection)
+        if (!collectionConfig) {
+            throw new APIError('Collection not found', 404)
+        }
 
-    // Preview data
-    const results = await req.payload.find({
-      collection,
-      where,
-      limit,
-      depth: 0,
-    })
+        // Preview data
+        const results = await req.payload.find({
+            collection,
+            where,
+            limit,
+            depth: 0,
+        })
 
-    return Response.json({
-      docs: results.docs,
-      totalDocs: results.totalDocs,
-      fields: collectionConfig.fields,
-    })
-  },
+        return Response.json({
+            docs: results.docs,
+            totalDocs: results.totalDocs,
+            fields: collectionConfig.fields,
+        })
+    },
 }
 ```
 
@@ -446,23 +450,23 @@ From `packages/plugin-search`:
 
 ```ts
 export const reindexEndpoint = (pluginConfig) => ({
-  path: '/reindex',
-  method: 'post',
-  handler: async (req) => {
-    if (!req.user) {
-      throw new APIError('Unauthorized', 401)
-    }
+    path: '/reindex',
+    method: 'post',
+    handler: async (req) => {
+        if (!req.user) {
+            throw new APIError('Unauthorized', 401)
+        }
 
-    const { collection } = req.routeParams
+        const { collection } = req.routeParams
 
-    // Reindex collection
-    const result = await reindexCollection(req.payload, collection, pluginConfig)
+        // Reindex collection
+        const result = await reindexCollection(req.payload, collection, pluginConfig)
 
-    return Response.json({
-      message: `Reindexed ${result.count} documents`,
-      count: result.count,
-    })
-  },
+        return Response.json({
+            message: `Reindexed ${result.count} documents`,
+            count: result.count,
+        })
+    },
 })
 ```
 
@@ -476,21 +480,21 @@ Mounted at `/api/{collection-slug}/{path}`.
 import type { CollectionConfig } from 'payload'
 
 export const Orders: CollectionConfig = {
-  slug: 'orders',
-  fields: [
-    /* ... */
-  ],
-  endpoints: [
-    {
-      path: '/:id/tracking',
-      method: 'get',
-      handler: async (req) => {
-        // Available at: /api/orders/:id/tracking
-        const orderId = req.routeParams.id
-        return Response.json({ orderId })
-      },
-    },
-  ],
+    slug: 'orders',
+    fields: [
+        /* ... */
+    ],
+    endpoints: [
+        {
+            path: '/:id/tracking',
+            method: 'get',
+            handler: async (req) => {
+                // Available at: /api/orders/:id/tracking
+                const orderId = req.routeParams.id
+                return Response.json({ orderId })
+            },
+        },
+    ],
 }
 ```
 
@@ -502,21 +506,21 @@ Mounted at `/api/globals/{global-slug}/{path}`.
 import type { GlobalConfig } from 'payload'
 
 export const Settings: GlobalConfig = {
-  slug: 'settings',
-  fields: [
-    /* ... */
-  ],
-  endpoints: [
-    {
-      path: '/clear-cache',
-      method: 'post',
-      handler: async (req) => {
-        // Available at: /api/globals/settings/clear-cache
-        await clearCache()
-        return Response.json({ message: 'Cache cleared' })
-      },
-    },
-  ],
+    slug: 'settings',
+    fields: [
+        /* ... */
+    ],
+    endpoints: [
+        {
+            path: '/clear-cache',
+            method: 'post',
+            handler: async (req) => {
+                // Available at: /api/globals/settings/clear-cache
+                await clearCache()
+                return Response.json({ message: 'Cache cleared' })
+            },
+        },
+    ],
 }
 ```
 
@@ -528,20 +532,20 @@ Create reusable endpoint factories for plugins.
 
 ```ts
 export const createWebhookEndpoint = (config) => ({
-  path: '/webhook',
-  method: 'post',
-  handler: async (req) => {
-    const signature = req.headers.get('x-webhook-signature')
+    path: '/webhook',
+    method: 'post',
+    handler: async (req) => {
+        const signature = req.headers.get('x-webhook-signature')
 
-    if (!verifySignature(signature, config.secret)) {
-      throw new APIError('Invalid signature', 401)
-    }
+        if (!verifySignature(signature, config.secret)) {
+            throw new APIError('Invalid signature', 401)
+        }
 
-    const data = await req.json()
-    await processWebhook(req.payload, data, config)
+        const data = await req.json()
+        await processWebhook(req.payload, data, config)
 
-    return Response.json({ received: true })
-  },
+        return Response.json({ received: true })
+    },
 })
 ```
 
@@ -551,28 +555,28 @@ Add endpoints based on config options.
 
 ```ts
 export const MyCollection: CollectionConfig = {
-  slug: 'posts',
-  fields: [
-    /* ... */
-  ],
-  endpoints: [
-    // Always included
-    {
-      path: '/public',
-      method: 'get',
-      handler: async (req) => Response.json({ data: [] }),
-    },
-    // Conditionally included
-    ...(process.env.ENABLE_ANALYTICS
-      ? [
-          {
-            path: '/analytics',
+    slug: 'posts',
+    fields: [
+        /* ... */
+    ],
+    endpoints: [
+        // Always included
+        {
+            path: '/public',
             method: 'get',
-            handler: async (req) => Response.json({ analytics: [] }),
-          },
-        ]
-      : []),
-  ],
+            handler: async (req) => Response.json({ data: [] }),
+        },
+        // Conditionally included
+        ...(process.env.ENABLE_ANALYTICS
+            ? [
+                  {
+                      path: '/analytics',
+                      method: 'get',
+                      handler: async (req) => Response.json({ analytics: [] }),
+                  },
+              ]
+            : []),
+    ],
 }
 ```
 
@@ -582,34 +586,34 @@ Use `custom` property for API documentation metadata.
 
 ```ts
 export const endpoint = {
-  path: '/search',
-  method: 'get',
-  handler: async (req) => {
-    // Handler implementation
-  },
-  custom: {
-    openapi: {
-      summary: 'Search posts',
-      parameters: [
-        {
-          name: 'q',
-          in: 'query',
-          required: true,
-          schema: { type: 'string' },
-        },
-      ],
-      responses: {
-        200: {
-          description: 'Search results',
-          content: {
-            'application/json': {
-              schema: { type: 'array' },
-            },
-          },
-        },
-      },
+    path: '/search',
+    method: 'get',
+    handler: async (req) => {
+        // Handler implementation
     },
-  },
+    custom: {
+        openapi: {
+            summary: 'Search posts',
+            parameters: [
+                {
+                    name: 'q',
+                    in: 'query',
+                    required: true,
+                    schema: { type: 'string' },
+                },
+            ],
+            responses: {
+                200: {
+                    description: 'Search results',
+                    content: {
+                        'application/json': {
+                            schema: { type: 'array' },
+                        },
+                    },
+                },
+            },
+        },
+    },
 }
 ```
 
