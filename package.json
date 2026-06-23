@@ -14,14 +14,17 @@
         "format": "prettier . --write",
         "payload": "cross-env NODE_OPTIONS=--no-deprecation payload",
         "start": "cross-env NODE_OPTIONS=--no-deprecation next start",
+        "seed": "tsx -r dotenv/config src/collections/scripts/seed/script.ts",
         "test": "pnpm run test:int && pnpm run test:e2e",
         "test:e2e": "cross-env NODE_OPTIONS=\"--no-deprecation --import=tsx/esm\" playwright test --config=playwright.config.ts",
         "test:int": "cross-env NODE_OPTIONS=--no-deprecation vitest run --config ./vitest.config.mts"
     },
     "dependencies": {
+        "@payloadcms/db-postgres": "3.85.1",
         "@payloadcms/next": "3.85.1",
         "@payloadcms/richtext-lexical": "3.85.1",
         "@payloadcms/ui": "3.85.1",
+        "@t3-oss/env-nextjs": "^0.13.11",
         "cross-env": "^7.0.3",
         "dotenv": "16.4.7",
         "graphql": "^16.8.1",
@@ -30,7 +33,7 @@
         "react": "19.2.6",
         "react-dom": "19.2.6",
         "sharp": "0.34.2",
-        "@payloadcms/db-postgres": "3.85.1"
+        "zod": "^4.4.3"
     },
     "devDependencies": {
         "@playwright/test": "1.58.2",
@@ -58,5 +61,14 @@
             "esbuild",
             "unrs-resolver"
         ]
+    },
+    "allowScripts": {
+        "esbuild@0.18.20": true,
+        "esbuild@0.28.1": true,
+        "esbuild@0.25.12": true,
+        "esbuild@0.27.7": true,
+        "sharp@0.34.5": true,
+        "sharp@0.34.2": true,
+        "unrs-resolver@1.12.2": true
     }
 }
